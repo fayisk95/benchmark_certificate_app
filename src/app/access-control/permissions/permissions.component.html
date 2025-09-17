@@ -1,0 +1,54 @@
+<div class="permissions-container">
+  <mat-card class="permissions-card">
+    <mat-card-header>
+      <mat-card-title>Role Permissions Configuration</mat-card-title>
+      <mat-card-subtitle>Configure permissions for each user role</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="permissions-grid">
+        <div class="permissions-header">
+          <div class="permission-label">Permission</div>
+          <div class="role-header" *ngFor="let role of userRoles">{{ role }}</div>
+        </div>
+
+        <div class="permission-row" *ngFor="let permission of availablePermissions">
+          <div class="permission-info">
+            <div class="permission-name">{{ permission.name }}</div>
+            <div class="permission-description">{{ permission.description }}</div>
+          </div>
+          
+          <div class="role-checkbox" *ngFor="let role of userRoles">
+            <mat-checkbox
+              [checked]="hasPermission(role, permission.id)"
+              (change)="togglePermission(role, permission.id)"
+              [color]="'accent'">
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <div class="current-permissions">
+        <h3>Current Permission Summary</h3>
+        <div class="role-summary" *ngFor="let rolePermission of rolePermissions">
+          <h4 class="role-name">{{ rolePermission.role }}</h4>
+          <mat-chip-set class="permission-chips">
+            <mat-chip *ngFor="let permissionId of rolePermission.permissions" 
+                      class="permission-chip">
+              {{ getPermissionName(permissionId) }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <button mat-button (click)="resetToDefaults()" class="reset-button">
+        Reset to Defaults
+      </button>
+      <button mat-raised-button color="primary" (click)="savePermissions()">
+        Save Changes
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

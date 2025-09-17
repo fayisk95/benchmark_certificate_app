@@ -1,0 +1,102 @@
+/* Global styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+:root {
+  --primary-color: #0A1F44;
+  --accent-color: #2BB673;
+  --background-color: #FFFFFF;
+  --light-gray: #F5F5F5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--light-gray);
+  color: #333;
+}
+
+.primary-color {
+  color: var(--primary-color) !important;
+}
+
+.accent-color {
+  color: var(--accent-color) !important;
+}
+
+.primary-bg {
+  background-color: var(--primary-color) !important;
+}
+
+.accent-bg {
+  background-color: var(--accent-color) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background-color: var(--primary-color);
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  background-color: var(--accent-color);
+}
+
+.mat-mdc-form-field.mat-accent .mat-mdc-text-field-wrapper:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: var(--primary-color);
+}
+
+.mat-mdc-form-field.mat-accent .mdc-text-field--focused .mdc-floating-label {
+  color: var(--accent-color);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.p-20 {
+  padding: 20px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+}
+
+.stats-card {
+  flex: 1;
+  min-width: 250px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: white;
+}
+
+.stats-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.stats-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 8px;
+}

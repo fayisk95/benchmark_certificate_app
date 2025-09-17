@@ -1,0 +1,95 @@
+<div class="page-header">
+  <h1>Batch Management</h1>
+  <p>Manage training batches and participant groups</p>
+</div>
+
+<div class="content-container">
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="createBatch()">
+      <mat-icon>group_add</mat-icon>
+      Create New Batch
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <table mat-table [dataSource]="batches" class="w-100">
+        <ng-container matColumnDef="batchNumber">
+          <th mat-header-cell *matHeaderCellDef>Batch #</th>
+          <td mat-cell *matCellDef="let batch">
+            <strong>{{ batch.batchNumber }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="companyName">
+          <th mat-header-cell *matHeaderCellDef>Company</th>
+          <td mat-cell *matCellDef="let batch">
+            <div class="company-info">
+              <div>{{ batch.companyName }}</div>
+              <div class="referred-by">Referred by: {{ batch.referredBy }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="batchType">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let batch">
+            <mat-chip [style.background-color]="getBatchTypeColor(batch.batchType)">
+              {{ batch.batchType }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="certificateType">
+          <th mat-header-cell *matHeaderCellDef>Certificate</th>
+          <td mat-cell *matCellDef="let batch">
+            <mat-chip [style.background-color]="getCertificateTypeColor(batch.certificateType)">
+              {{ batch.certificateType }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="participants">
+          <th mat-header-cell *matHeaderCellDef>Participants</th>
+          <td mat-cell *matCellDef="let batch">
+            <div class="participants-info">
+              <strong>{{ batch.numberOfParticipants }}</strong>
+              <div class="reserved-numbers">{{ batch.reservedCertificateNumbers.length }} numbers reserved</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dates">
+          <th mat-header-cell *matHeaderCellDef>Training Period</th>
+          <td mat-cell *matCellDef="let batch">
+            <div class="date-range">
+              <div>{{ batch.startDate | date:'MMM dd, yyyy' }}</div>
+              <div class="to">to</div>
+              <div>{{ batch.endDate | date:'MMM dd, yyyy' }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="instructor">
+          <th mat-header-cell *matHeaderCellDef>Instructor</th>
+          <td mat-cell *matCellDef="let batch">{{ batch.instructorName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let batch">
+            <button mat-icon-button (click)="editBatch(batch)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteBatch(batch)" color="warn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

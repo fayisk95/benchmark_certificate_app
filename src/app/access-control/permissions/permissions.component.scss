@@ -1,0 +1,147 @@
+.permissions-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.permissions-card {
+  mat-card-title {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+  }
+  
+  mat-card-subtitle {
+    color: #666;
+    margin-top: 8px;
+  }
+  
+  .permissions-grid {
+    margin-bottom: 32px;
+    
+    .permissions-header {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 2px solid var(--primary-color);
+      margin-bottom: 16px;
+      
+      .permission-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 1rem;
+      }
+      
+      .role-header {
+        text-align: center;
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+      }
+    }
+    
+    .permission-row {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+      
+      &:hover {
+        background-color: var(--light-gray);
+      }
+      
+      .permission-info {
+        .permission-name {
+          font-weight: 500;
+          color: var(--primary-color);
+          margin-bottom: 4px;
+        }
+        
+        .permission-description {
+          font-size: 0.85rem;
+          color: #666;
+        }
+      }
+      
+      .role-checkbox {
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+  
+  .current-permissions {
+    h3 {
+      color: var(--primary-color);
+      margin-bottom: 16px;
+    }
+    
+    .role-summary {
+      margin-bottom: 20px;
+      
+      .role-name {
+        color: var(--primary-color);
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+      
+      .permission-chips {
+        .permission-chip {
+          margin-right: 8px;
+          margin-bottom: 4px;
+          background-color: var(--accent-color);
+          color: white;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+    
+    .reset-button {
+      color: #666;
+    }
+  }
+}
+
+// Method to get permission name by ID (add to component)
+.permissions-component {
+  getPermissionName(permissionId: string): string {
+    const permission = this.availablePermissions.find(p => p.id === permissionId);
+    return permission ? permission.name : permissionId;
+  }
+}
+
+@media (max-width: 768px) {
+  .permissions-grid {
+    .permissions-header,
+    .permission-row {
+      grid-template-columns: 1fr;
+      text-align: left;
+    }
+    
+    .role-header {
+      display: none;
+    }
+    
+    .role-checkbox {
+      justify-content: flex-start;
+      margin-left: 16px;
+      
+      &::before {
+        content: attr(data-role);
+        margin-right: 8px;
+        font-size: 0.85rem;
+        color: #666;
+      }
+    }
+  }
+}

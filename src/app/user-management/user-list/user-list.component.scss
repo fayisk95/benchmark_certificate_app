@@ -1,0 +1,106 @@
+.user-list-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.user-list-card {
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    mat-card-title {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    
+    .create-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+.filters-section {
+  margin-bottom: 24px;
+  
+  .search-field {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  
+  .user-table {
+    width: 100%;
+    
+    .user-info {
+      strong {
+        color: var(--primary-color);
+      }
+    }
+    
+    .role-chip {
+      font-size: 12px;
+      
+      &.role-admin {
+        background-color: #ff6b35;
+        color: white;
+      }
+      
+      &.role-supervisor {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      
+      &.role-instructor {
+        background-color: var(--accent-color);
+        color: white;
+      }
+      
+      &.role-staff {
+        background-color: #666;
+        color: white;
+      }
+    }
+    
+    .status-active {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .status-inactive {
+      background-color: #ccc;
+      color: #666;
+    }
+    
+    th {
+      background-color: var(--light-gray);
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    td, th {
+      padding: 12px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .create-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

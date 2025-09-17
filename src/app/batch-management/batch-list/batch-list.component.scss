@@ -1,0 +1,135 @@
+.batch-list-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.batch-list-card {
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    mat-card-title {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .create-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+.filters-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 2;
+    min-width: 300px;
+  }
+
+  .filter-field {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+
+  .batch-table {
+    width: 100%;
+
+    .batch-number {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .company-info {
+      .company-name {
+        font-weight: 500;
+        color: var(--primary-color);
+      }
+
+      .referred-by {
+        font-size: 0.8rem;
+        color: #666;
+      }
+    }
+
+    .type-chip {
+      font-size: 12px;
+
+      &.type-onsite {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      &.type-hybrid {
+        background-color: var(--accent-color);
+        color: white;
+      }
+
+      &.type-online {
+        background-color: #ff6b35;
+        color: white;
+      }
+    }
+
+    .cert-chip {
+      font-size: 12px;
+
+      &.cert-fire {
+        background-color: #ff6b35;
+        color: white;
+      }
+
+      &.cert-water {
+        background-color: #1976d2;
+        color: white;
+      }
+    }
+
+    th {
+      background-color: var(--light-gray);
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    td,
+    th {
+      padding: 12px;
+    }
+  }
+}
+
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+
+    .create-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .filters-section {
+    flex-direction: column;
+
+    .search-field,
+    .filter-field {
+      width: 100%;
+    }
+  }
+}

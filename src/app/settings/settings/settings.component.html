@@ -1,0 +1,131 @@
+<div class="settings-container">
+  <mat-card class="settings-card">
+    <mat-card-header>
+      <mat-card-title>System Settings</mat-card-title>
+      <mat-card-subtitle>Configure application preferences and defaults</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+
+        <!-- Certificate Settings -->
+        <div class="settings-section">
+          <h3 class="section-title">Certificate Settings</h3>
+          <mat-divider></mat-divider>
+
+          <div class="form-row">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Certificate Number Format</mat-label>
+              <input matInput formControlName="certificateNumberFormat" placeholder="FS-{YYYY}-{####}">
+              <mat-hint></mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field class="half-width" appearance="outline">
+              <mat-label>Starting Number</mat-label>
+              <input matInput type="number" formControlName="certificateStartNumber" min="1">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Batch Settings -->
+        <div class="settings-section">
+          <h3 class="section-title">Batch Settings</h3>
+          <mat-divider></mat-divider>
+
+          <div class="form-row">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Batch Number Format</mat-label>
+              <input matInput formControlName="batchNumberFormat" placeholder="BTH-{YYYY}-{###}">
+              <mat-hint></mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field class="half-width" appearance="outline">
+              <mat-label>Starting Number</mat-label>
+              <input matInput type="number" formControlName="batchStartNumber" min="1">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Expiry Settings -->
+        <div class="settings-section">
+          <h3 class="section-title">Expiry & Notifications</h3>
+          <mat-divider></mat-divider>
+
+          <div class="form-row">
+            <mat-form-field class="half-width" appearance="outline">
+              <mat-label>Expiry Warning (Days)</mat-label>
+              <input matInput type="number" formControlName="expiryWarningDays" min="1" max="365">
+              <mat-hint>Show expiring soon warning this many days before expiry</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Notification Email</mat-label>
+              <input matInput type="email" formControlName="notificationEmail">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Dashboard Settings -->
+        <div class="settings-section">
+          <h3 class="section-title">Dashboard & Interface</h3>
+          <mat-divider></mat-divider>
+
+          <div class="form-row">
+            <mat-form-field class="half-width" appearance="outline">
+              <mat-label>Default Dashboard View</mat-label>
+              <mat-select formControlName="defaultDashboardView">
+                <mat-option value="cards">Cards View</mat-option>
+                <mat-option value="compact">Compact View</mat-option>
+                <mat-option value="detailed">Detailed View</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="half-width" appearance="outline">
+              <mat-label>Items Per Page</mat-label>
+              <mat-select formControlName="itemsPerPage">
+                <mat-option value="10">10</mat-option>
+                <mat-option value="20">20</mat-option>
+                <mat-option value="50">50</mat-option>
+                <mat-option value="100">100</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Sample Formats Display -->
+        <div class="settings-section">
+          <h3 class="section-title">Preview</h3>
+          <mat-divider></mat-divider>
+
+          <div class="preview-section">
+            <div class="preview-item">
+              <label>Certificate Number Example:</label>
+              <span class="preview-value">{{ generateSampleCertNumber() }}</span>
+            </div>
+
+            <div class="preview-item">
+              <label>Batch Number Example:</label>
+              <span class="preview-value">{{ generateSampleBatchNumber() }}</span>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <button mat-button (click)="resetToDefaults()" class="reset-button">
+        Reset to Defaults
+      </button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="settingsForm.invalid">
+        Save Settings
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

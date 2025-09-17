@@ -1,0 +1,100 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  padding: 20px;
+}
+
+.login-card-wrapper {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+  
+  .logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+    
+    .logo-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .company-title {
+      color: var(--primary-color);
+      font-weight: 500;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  }
+  
+  mat-form-field {
+    margin-bottom: 16px;
+  }
+  
+  .login-button {
+    margin-top: 20px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .forgot-password {
+    text-align: center;
+    margin-top: 20px;
+    
+    .forgot-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+      
+      &:hover {
+        color: var(--accent-color);
+      }
+    }
+  }
+  
+  .error-message {
+    color: #f44336;
+    font-size: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+    padding: 8px;
+    background: #ffebee;
+    border-radius: 4px;
+  }
+  
+  .demo-credentials {
+    margin-top: 30px;
+    padding: 16px;
+    background: var(--light-gray);
+    border-radius: 8px;
+    font-size: 12px;
+    
+    h4 {
+      margin: 0 0 8px 0;
+      color: var(--primary-color);
+    }
+    
+    p {
+      margin: 4px 0;
+      color: #666;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 20px;
+  }
+}

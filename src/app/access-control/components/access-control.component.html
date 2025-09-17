@@ -1,0 +1,74 @@
+<div class="page-header">
+  <h1>Access Control</h1>
+  <p>Configure role-based permissions for system features</p>
+</div>
+
+<div class="content-container">
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="saveChanges()">
+      <mat-icon>save</mat-icon>
+      Save Changes
+    </button>
+    <button mat-raised-button (click)="resetToDefaults()">
+      <mat-icon>refresh</mat-icon>
+      Reset to Defaults
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Role Permissions Matrix</mat-card-title>
+      <mat-card-subtitle>Configure what each role can access and perform</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="permissions-matrix">
+        <table class="permissions-table">
+          <thead>
+            <tr>
+              <th class="permission-column">Permission</th>
+              <th *ngFor="let role of roles" class="role-column">{{ role }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let permission of permissions" class="permission-row">
+              <td class="permission-cell">
+                <div class="permission-info">
+                  <div class="permission-name">{{ permission }}</div>
+                  <div class="permission-desc">{{ getPermissionDescription(permission) }}</div>
+                </div>
+              </td>
+              <td *ngFor="let role of roles" class="checkbox-cell">
+                <mat-checkbox
+                  [checked]="hasPermission(role, permission)"
+                  (change)="togglePermission(role, permission, $event.checked)"
+                  color="accent">
+                </mat-checkbox>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Role Summary Cards -->
+  <div class="role-summary">
+    <mat-card *ngFor="let role of roles" class="role-card">
+      <mat-card-header>
+        <mat-card-title>{{ role }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="permission-list">
+          <div 
+            *ngFor="let permission of permissions" 
+            class="permission-item"
+            [class.enabled]="hasPermission(role, permission)">
+            <mat-icon>{{ hasPermission(role, permission) ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>{{ permission }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

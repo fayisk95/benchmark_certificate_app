@@ -1,0 +1,40 @@
+h3 {
+  color: #0A1F44;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 32px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2BB673;
+  
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+
+  &.full-width {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}

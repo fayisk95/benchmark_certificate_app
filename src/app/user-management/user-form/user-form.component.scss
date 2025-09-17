@@ -1,0 +1,57 @@
+.user-form-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.user-form-card {
+  mat-card-title {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    
+    .full-width {
+      width: 100%;
+    }
+    
+    .half-width {
+      flex: 1;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+    
+    .cancel-button {
+      color: #666;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    
+    .half-width {
+      width: 100%;
+    }
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
