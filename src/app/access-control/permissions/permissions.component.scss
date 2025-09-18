@@ -1,73 +1,115 @@
 .permissions-container {
   padding: 24px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Inter', sans-serif;
 }
 
 .permissions-card {
-  mat-card-title {
-    color: var(--primary-color);
-    font-size: 1.5rem;
+  background: var(--background-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  
+  .mat-mdc-card-header {
+    padding: 32px 32px 0 32px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 32px;
+    
+    .mat-mdc-card-title {
+      color: var(--primary-color);
+      font-size: 28px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      margin: 0 0 8px 0;
+    }
+    
+    .mat-mdc-card-subtitle {
+      color: var(--text-light);
+      font-size: 15px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+    }
   }
   
-  mat-card-subtitle {
-    color: #666;
-    margin-top: 8px;
+  .mat-mdc-card-content {
+    padding: 0 32px 32px 32px;
   }
   
   .permissions-grid {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     
     .permissions-header {
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
-      gap: 16px;
-      padding: 16px 0;
-      border-bottom: 2px solid var(--primary-color);
-      margin-bottom: 16px;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 3px solid var(--primary-color);
+      margin-bottom: 20px;
+      background: var(--light-gray);
+      border-radius: var(--border-radius);
+      padding: 20px;
       
       .permission-label {
         font-weight: 600;
         color: var(--primary-color);
-        font-size: 1rem;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
       }
       
       .role-header {
         text-align: center;
         font-weight: 600;
         color: var(--primary-color);
-        font-size: 0.9rem;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
       }
     }
     
     .permission-row {
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
-      gap: 16px;
-      padding: 16px 0;
-      border-bottom: 1px solid #eee;
+      gap: 20px;
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
       align-items: center;
+      border-radius: var(--border-radius);
+      transition: all 0.2s ease;
       
       &:hover {
         background-color: var(--light-gray);
+        box-shadow: var(--shadow-sm);
       }
       
       .permission-info {
         .permission-name {
-          font-weight: 500;
+          font-weight: 600;
           color: var(--primary-color);
-          margin-bottom: 4px;
+          margin-bottom: 6px;
+          font-family: 'Inter', sans-serif;
+          font-size: 15px;
         }
         
         .permission-description {
-          font-size: 0.85rem;
-          color: #666;
+          font-size: 13px;
+          color: var(--text-light);
+          line-height: 1.4;
+          font-family: 'Inter', sans-serif;
         }
       }
       
       .role-checkbox {
         display: flex;
         justify-content: center;
+        
+        .mat-mdc-checkbox {
+          --mdc-checkbox-selected-checkmark-color: white;
+          --mdc-checkbox-selected-focus-state-layer-color: var(--accent-color);
+          --mdc-checkbox-selected-hover-state-layer-color: var(--accent-color);
+          --mdc-checkbox-selected-pressed-state-layer-color: var(--accent-color);
+        }
       }
     }
   }
@@ -75,72 +117,143 @@
   .current-permissions {
     h3 {
       color: var(--primary-color);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
     }
     
     .role-summary {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: var(--light-gray);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
       
       .role-name {
         color: var(--primary-color);
-        margin-bottom: 8px;
-        font-size: 1rem;
+        margin-bottom: 12px;
+        font-size: 18px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
       }
       
       .permission-chips {
         .permission-chip {
           margin-right: 8px;
-          margin-bottom: 4px;
+          margin-bottom: 8px;
           background-color: transparent !important;
           color: var(--accent-color);
           border: 1px solid var(--accent-color);
           font-size: 12px;
           font-weight: 500;
+          font-family: 'Inter', sans-serif;
+          height: 32px;
+          border-radius: 16px;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+          }
         }
       }
     }
   }
   
-  .card-actions {
+  .mat-mdc-card-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid #eee;
+    padding: 24px 32px;
+    border-top: 1px solid var(--border-color);
+    background: var(--light-gray);
+    margin: 0;
     
     .reset-button {
-      color: #666;
+      color: var(--text-light);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      
+      &:hover {
+        background-color: var(--background-color);
+        color: var(--primary-color);
+      }
+    }
+    
+    .mat-mdc-raised-button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      padding: 0 32px;
+      height: 44px;
     }
   }
 }
 
-// Method to get permission name by ID (add to component)
-.permissions-component {
- 
-}
-
 @media (max-width: 768px) {
+  .permissions-container {
+    padding: 16px;
+  }
+  
+  .permissions-card {
+    .mat-mdc-card-header {
+      padding: 24px 24px 0 24px;
+      
+      .mat-mdc-card-title {
+        font-size: 24px;
+      }
+    }
+    
+    .mat-mdc-card-content {
+      padding: 0 24px 24px 24px;
+    }
+    
+    .mat-mdc-card-actions {
+      padding: 20px 24px;
+    }
+  }
+  
   .permissions-grid {
     .permissions-header,
     .permission-row {
       grid-template-columns: 1fr;
       text-align: left;
+      gap: 12px;
     }
     
-    .role-header {
-      display: none;
-    }
-    
-    .role-checkbox {
-      justify-content: flex-start;
-      margin-left: 16px;
-      
-      &::before {
-        content: attr(data-role);
-        margin-right: 8px;
-        font-size: 0.85rem;
-        color: #666;
+    .permissions-header {
+      .role-header {
+        display: none;
       }
+    }
+    
+    .permission-row {
+      .role-checkbox {
+        justify-content: flex-start;
+        margin-left: 0;
+        padding: 8px 0;
+        border-top: 1px solid var(--border-color);
+        
+        &::before {
+          content: attr(data-role);
+          margin-right: 12px;
+          font-size: 14px;
+          color: var(--text-light);
+          font-weight: 500;
+          font-family: 'Inter', sans-serif;
+          min-width: 80px;
+        }
+      }
+    }
+  }
+  
+  .mat-mdc-card-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+    
+    button {
+      width: 100%;
+      height: 48px;
     }
   }
 }
