@@ -37,7 +37,7 @@
         mat-list-item 
         *ngFor="let item of menuItems"
         [routerLink]="item.route"
-        routerLinkActive="active"
+        [class.active]="isRouteActive(item.route)"
         [class.hidden]="!hasPermission(item.permission)"
         class="nav-item">
         <mat-icon matListIcon>{{ item.icon }}</mat-icon>

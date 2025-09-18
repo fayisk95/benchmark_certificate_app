@@ -48,6 +48,9 @@
     
     .role-chip {
       font-size: 12px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
       
       &.role-admin {
         background-color: #ff6b35;
@@ -73,11 +76,17 @@
     .status-active {
       background-color: var(--accent-color);
       color: white;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
     }
     
     .status-inactive {
       background-color: #ccc;
       color: #666;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
     }
     
     th {

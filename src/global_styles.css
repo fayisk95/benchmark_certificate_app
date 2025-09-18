@@ -1,11 +1,15 @@
 /* Global styles */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 
 :root {
   --primary-color: #0A1F44;
   --accent-color: #2BB673;
   --background-color: #FFFFFF;
   --light-gray: #F5F5F5;
+  --text-color: #333333;
+  --text-light: #666666;
+  --text-muted: #999999;
 }
 
 * {
@@ -17,7 +21,25 @@
 body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--light-gray);
-  color: #333;
+  color: var(--text-color);
+}
+
+/* Material Icons Fix */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  color: inherit;
 }
 
 .primary-color {
@@ -30,18 +52,22 @@ body {
 
 .primary-bg {
   background-color: var(--primary-color) !important;
+  color: white !important;
 }
 
 .accent-bg {
   background-color: var(--accent-color) !important;
+  color: white !important;
 }
 
 .mat-mdc-raised-button.mat-primary {
   background-color: var(--primary-color);
+  color: white !important;
 }
 
 .mat-mdc-raised-button.mat-primary:hover {
   background-color: var(--accent-color);
+  color: white !important;
 }
 
 .mat-mdc-form-field.mat-accent .mat-mdc-text-field-wrapper:not(.mdc-text-field--disabled) .mdc-text-field__input {
@@ -87,6 +113,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   background: white;
+  color: var(--text-color);
 }
 
 .stats-number {
@@ -97,6 +124,48 @@ body {
 
 .stats-label {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-light);
   margin-top: 8px;
+}
+
+/* Fix text visibility on colored backgrounds */
+.mat-mdc-card {
+  background: white !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-card-title {
+  color: var(--primary-color) !important;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--text-light) !important;
+}
+
+/* Table text visibility */
+.mat-mdc-table {
+  background: white !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-header-cell {
+  color: var(--primary-color) !important;
+  font-weight: 600 !important;
+}
+
+.mat-mdc-cell {
+  color: var(--text-color) !important;
+}
+
+/* Form field text visibility */
+.mat-mdc-form-field {
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label {
+  color: var(--text-light) !important;
+}
+
+.mat-mdc-form-field .mat-mdc-form-field-input-control {
+  color: var(--text-color) !important;
 }

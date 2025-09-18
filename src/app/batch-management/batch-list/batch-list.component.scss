@@ -67,6 +67,9 @@
 
     .type-chip {
       font-size: 12px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
 
       &.type-onsite {
         background-color: var(--primary-color);
@@ -86,6 +89,9 @@
 
     .cert-chip {
       font-size: 12px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
 
       &.cert-fire {
         background-color: #ff6b35;

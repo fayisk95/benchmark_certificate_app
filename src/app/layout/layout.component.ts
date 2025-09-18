@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
 import { PermissionsService } from '../shared/services/permissions.service';
 import { User, UserRole } from '../shared/models/user.model';
+import { filter } from 'rxjs/operators';
 
 interface MenuItem {
   name: string;
@@ -20,6 +21,7 @@ interface MenuItem {
 export class LayoutComponent implements OnInit {
   currentUser: User | null = null;
   sidenavOpened = true;
+  currentRoute = '';
 
   menuItems: MenuItem[] = [
     { name: 'Dashboard', icon: 'dashboard', route: '/dashboard', permission: 'dashboard-access' },
@@ -42,6 +44,16 @@ export class LayoutComponent implements OnInit {
     });
 
     this.currentUser = this.authService.getCurrentUser();
+
+    // Track current route for navigation highlighting
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.currentRoute = event.url;
+    });
+
+    // Set initial route
+    this.currentRoute = this.router.url;
   }
 
   hasPermission(permission?: string): boolean {
@@ -49,6 +61,12 @@ export class LayoutComponent implements OnInit {
     return this.permissionsService.hasPermission(this.currentUser.role, permission);
   }
 
+  isRouteActive(route: string): boolean {
+    if (route === '/dashboard') {
+      return this.currentRoute === '/dashboard' || this.currentRoute === '/dashboard/';
+    }
+    return this.currentRoute.startsWith(route);
+  }
   toggleSidenav(): void {
     this.sidenavOpened = !this.sidenavOpened;
   }

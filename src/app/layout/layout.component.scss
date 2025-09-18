@@ -3,14 +3,17 @@
   top: 0;
   z-index: 1000;
   background-color: var(--primary-color) !important;
+  color: white !important;
   
   .menu-button {
     margin-right: 16px;
+    color: white !important;
   }
   
   .app-title {
     font-size: 1.2rem;
     font-weight: 500;
+    color: white !important;
   }
   
   .spacer {
@@ -21,10 +24,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: white;
+    color: white !important;
     
     .user-name {
       font-size: 14px;
+      color: white !important;
+    }
+    
+    mat-icon {
+      color: white !important;
     }
   }
 }
@@ -41,7 +49,7 @@
     
     .user-role {
       font-size: 12px;
-      color: #666;
+      color: var(--text-light);
       text-transform: uppercase;
     }
   }
@@ -62,17 +70,24 @@
         margin: 4px 12px;
         border-radius: 8px;
         transition: all 0.3s ease;
+        color: var(--text-color) !important;
+        text-decoration: none;
         
         &:hover {
           background-color: rgba(43, 182, 115, 0.1);
+          color: var(--primary-color) !important;
         }
         
         &.active {
           background-color: var(--accent-color);
-          color: white;
+          color: white !important;
           
           mat-icon {
-            color: white;
+            color: white !important;
+          }
+          
+          span {
+            color: white !important;
           }
         }
         
@@ -82,11 +97,15 @@
         
         mat-icon {
           color: var(--primary-color);
-          margin-right: 12px;
+          margin-right: 16px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
         
         span {
           font-weight: 500;
+          color: inherit;
         }
       }
     }
