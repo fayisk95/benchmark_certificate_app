@@ -114,10 +114,7 @@
 
 // Method to get permission name by ID (add to component)
 .permissions-component {
-  getPermissionName(permissionId: string): string {
-    const permission = this.availablePermissions.find(p => p.id === permissionId);
-    return permission ? permission.name : permissionId;
-  }
+ 
 }
 
 @media (max-width: 768px) {

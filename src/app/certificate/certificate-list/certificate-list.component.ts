@@ -33,6 +33,8 @@ import { Certificate, CertificateStatus, AttachmentType } from '../../shared/mod
 export class CertificateListComponent implements OnInit {
   displayedColumns: string[] = ['certificateNumber', 'name', 'employer', 'trainingName', 'issueDate', 'dueDate', 'status', 'attachments', 'actions'];
   
+  public AttachmentType = AttachmentType;
+  
   certificates: Certificate[] = [
     {
       id: '1',
@@ -40,7 +42,7 @@ export class CertificateListComponent implements OnInit {
       batchId: '1',
       name: 'Ahmed Al Mansouri',
       nationality: 'UAE',
-      eidOrLicense: '784-1234-1234567-1',
+      eidLicense: '784-1234-1234567-1',
       employer: 'ABC Construction Ltd',
       trainingName: 'Fire Safety Training',
       trainingDate: new Date('2024-01-15'),
@@ -65,7 +67,7 @@ export class CertificateListComponent implements OnInit {
       batchId: '2',
       name: 'John Smith',
       nationality: 'UK',
-      eidOrLicense: 'DL-12345678',
+      eidLicense: 'DL-12345678',
       employer: 'Marine Services Co',
       trainingName: 'Water Safety Training',
       trainingDate: new Date('2024-02-01'),

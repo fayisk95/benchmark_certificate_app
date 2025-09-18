@@ -35,7 +35,11 @@ export class PermissionsComponent implements OnInit {
       this.rolePermissions = permissions;
     });
   }
-
+  
+ getPermissionName(permissionId: string): string {
+    const permission = this.availablePermissions.find(p => p.id === permissionId);
+    return permission ? permission.name : permissionId;
+  }
   hasPermission(role: UserRole, permissionId: string): boolean {
     const rolePermission = this.rolePermissions.find(rp => rp.role === role);
     return rolePermission ? rolePermission.permissions.includes(permissionId) : false;

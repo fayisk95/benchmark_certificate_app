@@ -64,7 +64,25 @@ export class SettingsComponent implements OnInit {
       this.settingsForm.patchValue(settings);
     }
   }
-  generateSampleCertNumber() { } generateSampleBatchNumber() { }
+
+  generateSampleCertNumber(): string {
+    const format = this.settingsForm.get('certificateNumberFormat')?.value || 'FS-{YYYY}-{####}';
+    const year = new Date().getFullYear();
+    const number = this.settingsForm.get('certificateStartNumber')?.value || 1;
+    return format
+      .replace('{YYYY}', year.toString())
+      .replace('{####}', String(number).padStart(4, '0'));
+  }
+
+  generateSampleBatchNumber(): string {
+    const format = this.settingsForm.get('batchNumberFormat')?.value || 'BTH-{YYYY}-{###}';
+    const year = new Date().getFullYear();
+    const number = this.settingsForm.get('batchStartNumber')?.value || 1;
+    return format
+      .replace('{YYYY}', year.toString())
+      .replace('{###}', String(number).padStart(3, '0'));
+  }
+
   onSubmit(): void {
     if (this.settingsForm.valid) {
       const settings = this.settingsForm.value;

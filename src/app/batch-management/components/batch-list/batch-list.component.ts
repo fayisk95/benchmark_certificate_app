@@ -4,7 +4,7 @@ import { Batch, BatchType, CertificateType } from '../../../core/models/batch.mo
 import { BatchService } from '../../../core/services/batch.service';
 
 @Component({
-  selector: 'app-batch-list',
+  standalone: false, selector: 'app-batch-list',
   templateUrl: './batch-list.component.html',
   styleUrls: ['./batch-list.component.scss']
 })

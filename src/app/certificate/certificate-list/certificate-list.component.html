@@ -85,24 +85,24 @@
             <td mat-cell *matCellDef="let certificate">
               <div class="attachment-icons">
                 <mat-icon 
-                  *ngIf="hasAttachment(certificate, 'EID')"
+                  *ngIf="hasAttachment(certificate, AttachmentType.EID)"
                   class="attachment-icon eid-icon"
                   title="EID Available"
-                  (click)="downloadAttachment(certificate, 'EID')">
+                  (click)="downloadAttachment(certificate, AttachmentType.EID)">
                   credit_card
                 </mat-icon>
                 <mat-icon 
-                  *ngIf="hasAttachment(certificate, 'Driving License')"
+                  *ngIf="hasAttachment(certificate, AttachmentType.DRIVING_LICENSE)"
                   class="attachment-icon license-icon"
                   title="License Available"
-                  (click)="downloadAttachment(certificate, 'Driving License')">
+                  (click)="downloadAttachment(certificate, AttachmentType.DRIVING_LICENSE)">
                   drive_eta
                 </mat-icon>
                 <mat-icon 
-                  *ngIf="hasAttachment(certificate, 'Signed Certificate')"
+                  *ngIf="hasAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)"
                   class="attachment-icon signed-icon"
                   title="Signed Certificate"
-                  (click)="downloadAttachment(certificate, 'Signed Certificate')">
+                  (click)="downloadAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)">
                   fact_check
                 </mat-icon>
               </div>

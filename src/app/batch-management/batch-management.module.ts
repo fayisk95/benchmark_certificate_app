@@ -33,6 +33,7 @@ import { BatchFormComponent } from './components/batch-form/batch-form.component
       { path: 'edit/:id', component: BatchFormComponent }
     ]),
     // Material modules
+
     MatCardModule,
     MatTableModule,
     MatButtonModule,

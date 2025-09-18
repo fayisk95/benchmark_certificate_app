@@ -1,0 +1,120 @@
+<div class="certificate-form-container">
+  <mat-card class="certificate-form-card">
+    <mat-card-header>
+      <mat-card-title>{{ isEdit ? 'Edit Certificate' : 'Create New Certificate' }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="certificateForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Batch</mat-label>
+            <mat-select formControlName="batchId" required>
+              <mat-option *ngFor="let batch of batches" [value]="batch.id">
+                {{ batch.batchNumber }} - {{ batch.companyName }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="certificateForm.get('batchId')?.hasError('required')">
+              Batch selection is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="name" required>
+            <mat-error *ngIf="certificateForm.get('name')?.hasError('required')">
+              Name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Nationality</mat-label>
+            <input matInput formControlName="nationality" required>
+            <mat-error *ngIf="certificateForm.get('nationality')?.hasError('required')">
+              Nationality is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>EID/License Number</mat-label>
+            <input matInput formControlName="eidLicense" required>
+            <mat-error *ngIf="certificateForm.get('eidLicense')?.hasError('required')">
+              EID/License number is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Employer</mat-label>
+            <input matInput formControlName="employer" required>
+            <mat-error *ngIf="certificateForm.get('employer')?.hasError('required')">
+              Employer is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Training Name</mat-label>
+            <input matInput formControlName="trainingName" required>
+            <mat-error *ngIf="certificateForm.get('trainingName')?.hasError('required')">
+              Training name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Training Date</mat-label>
+            <input matInput [matDatepicker]="trainingPicker" formControlName="trainingDate" required>
+            <mat-datepicker-toggle matIconSuffix [for]="trainingPicker"></mat-datepicker-toggle>
+            <mat-datepicker #trainingPicker></mat-datepicker>
+            <mat-error *ngIf="certificateForm.get('trainingDate')?.hasError('required')">
+              Training date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Issue Date</mat-label>
+            <input matInput [matDatepicker]="issuePicker" formControlName="issueDate" required>
+            <mat-datepicker-toggle matIconSuffix [for]="issuePicker"></mat-datepicker-toggle>
+            <mat-datepicker #issuePicker></mat-datepicker>
+            <mat-error *ngIf="certificateForm.get('issueDate')?.hasError('required')">
+              Issue date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Due Date</mat-label>
+            <input matInput [matDatepicker]="duePicker" formControlName="dueDate" required>
+            <mat-datepicker-toggle matIconSuffix [for]="duePicker"></mat-datepicker-toggle>
+            <mat-datepicker #duePicker></mat-datepicker>
+            <mat-error *ngIf="certificateForm.get('dueDate')?.hasError('required')">
+              Due date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Certificate Number (Optional)</mat-label>
+            <input matInput formControlName="certificateNumber" placeholder="Auto-generated if empty">
+            <mat-hint>Leave empty for auto-generation</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="certificateForm.invalid || isLoading">
+            {{ isLoading ? 'Saving...' : (isEdit ? 'Update Certificate' : 'Create Certificate') }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

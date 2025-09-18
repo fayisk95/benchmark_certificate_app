@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule, RouterOutlet } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,7 +15,7 @@ import { routes } from './app/app.routes';
   selector: 'app-root',
   template: `<router-outlet></router-outlet>`,
   standalone: true,
-  imports: []
+  imports: [RouterOutlet]
 })
 export class App {
   name = 'Certificate Management System';

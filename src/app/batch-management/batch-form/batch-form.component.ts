@@ -1,25 +1,37 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BatchService } from '../../../core/services/batch.service';
-import { UserService } from '../../../user-management/services/user.service';
-import { Batch, BatchType, CertificateType } from '../../../core/models/batch.model';
-import { AuthService } from '../../../core/services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BatchService } from '../../core/services/batch.service';
+import { UserService } from '../../user-management/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Batch, BatchType, CertificateType } from '../../core/models/batch.model';
 
 @Component({
-  standalone: false,
   selector: 'app-batch-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+  ],
   templateUrl: './batch-form.component.html',
   styleUrls: ['./batch-form.component.scss']
 })
 export class BatchFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private batchService = inject(BatchService);
-  private userService = inject(UserService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
   batchForm: FormGroup;
   isEditMode = false;
   batchId: string | null = null;
@@ -30,7 +42,14 @@ export class BatchFormComponent implements OnInit {
   certificateTypes: CertificateType[] = ['Fire & Safety', 'Water Safety'];
   instructors = this.userService.users().filter(u => u.role === 'Instructor' && u.isActive);
 
-  constructor() {
+  constructor(
+    private fb: FormBuilder,
+    private batchService: BatchService,
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.batchForm = this.fb.group({
       companyName: ['', [Validators.required, Validators.minLength(2)]],
       referredBy: ['', [Validators.required, Validators.minLength(2)]],
@@ -88,7 +107,7 @@ export class BatchFormComponent implements OnInit {
 
       try {
         const formValue = this.batchForm.value;
-
+        
         // Validate date range
         if (formValue.startDate >= formValue.endDate) {
           alert('End date must be after start date!');
@@ -102,7 +121,7 @@ export class BatchFormComponent implements OnInit {
           await this.batchService.createBatch(formValue);
         }
 
-        this.router.navigate(['/batches']);
+        this.router.navigate(['/dashboard/batches']);
       } catch (error) {
         alert('An error occurred while saving the batch.');
       } finally {
@@ -112,7 +131,7 @@ export class BatchFormComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/batches']);
+    this.router.navigate(['/dashboard/batches']);
   }
 
   get title(): string {

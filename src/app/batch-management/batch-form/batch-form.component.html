@@ -1,0 +1,132 @@
+<div class="batch-form-container">
+  <mat-card class="batch-form-card">
+    <mat-card-header>
+      <mat-card-title>{{ title }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="batchForm" (ngSubmit)="onSubmit()">
+        <!-- Company Information -->
+        <h3>Company Information</h3>
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Company Name</mat-label>
+            <input matInput formControlName="companyName" placeholder="Enter company name">
+            <mat-error *ngIf="batchForm.get('companyName')?.hasError('required')">
+              Company name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Referred By</mat-label>
+            <input matInput formControlName="referredBy" placeholder="Enter referrer name">
+            <mat-error *ngIf="batchForm.get('referredBy')?.hasError('required')">
+              Referrer name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Batch Details -->
+        <h3>Batch Details</h3>
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Number of Participants</mat-label>
+            <input matInput type="number" formControlName="numberOfParticipants" min="1" max="100">
+            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('required')">
+              Number of participants is required
+            </mat-error>
+            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('min')">
+              At least 1 participant required
+            </mat-error>
+            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('max')">
+              Maximum 100 participants allowed
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline" *ngIf="canManualOverride">
+            <mat-label>Batch Number (Optional)</mat-label>
+            <input matInput formControlName="batchNumber" placeholder="Auto-generated if empty">
+            <mat-hint>Leave empty for auto-generation</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Batch Type</mat-label>
+            <mat-select formControlName="batchType">
+              <mat-option *ngFor="let type of batchTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Certificate Type</mat-label>
+            <mat-select formControlName="certificateType">
+              <mat-option *ngFor="let type of certificateTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Training Schedule -->
+        <h3>Training Schedule</h3>
+        <div class="form-row">
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            <mat-error *ngIf="batchForm.get('startDate')?.hasError('required')">
+              Start date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            <mat-error *ngIf="batchForm.get('endDate')?.hasError('required')">
+              End date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Instructor Assignment -->
+        <h3>Instructor Assignment</h3>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Instructor</mat-label>
+            <mat-select formControlName="instructorId">
+              <mat-option *ngFor="let instructor of instructors" [value]="instructor.id">
+                {{ instructor.name }} ({{ instructor.email }})
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="batchForm.get('instructorId')?.hasError('required')">
+              Please select an instructor
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Description -->
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="4" placeholder="Enter batch description or special notes"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()" [disabled]="isLoading">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="batchForm.invalid || isLoading">
+            {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Batch' : 'Create Batch') }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

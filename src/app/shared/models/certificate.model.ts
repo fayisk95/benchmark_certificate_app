@@ -4,7 +4,7 @@ export interface Certificate {
   batchId: string;
   name: string;
   nationality: string;
-  eidOrLicense: string;
+  eidLicense: string;
   employer: string;
   trainingName: string;
   trainingDate: Date;
