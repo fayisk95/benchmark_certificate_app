@@ -8,62 +8,7 @@ import { filter } from 'rxjs/operators';
   selector: 'app-root',
   template: `
     <div class="app-container">
-      <div *ngIf="!isLoginPage">
-        <mat-toolbar color="primary" class="app-toolbar">
-          <button mat-icon-button (click)="toggleSidenav()">
-            <mat-icon>menu</mat-icon>
-          </button>
-          <span class="app-title">Certificate Management System</span>
-          <span class="spacer"></span>
-          <button mat-button [matMenuTriggerFor]="userMenu">
-            <mat-icon>account_circle</mat-icon>
-            {{ currentUser?.name || 'User' }}
-          </button>
-          <mat-menu #userMenu="matMenu">
-            <button mat-menu-item (click)="logout()">
-              <mat-icon>logout</mat-icon>
-              Logout
-            </button>
-          </mat-menu>
-        </mat-toolbar>
-
-        <mat-sidenav-container class="sidenav-container">
-          <mat-sidenav #sidenav mode="over" class="app-sidenav">
-            <mat-nav-list>
-              <a mat-list-item routerLink="/dashboard" (click)="sidenav.close()">
-                <mat-icon matListItemIcon>dashboard</mat-icon>
-                <span matListItemTitle>Dashboard</span>
-              </a>
-              <a mat-list-item routerLink="/batches" (click)="sidenav.close()">
-                <mat-icon matListItemIcon>group</mat-icon>
-                <span matListItemTitle>Batch Management</span>
-              </a>
-              <a mat-list-item routerLink="/certificates" (click)="sidenav.close()">
-                <mat-icon matListItemIcon>card_membership</mat-icon>
-                <span matListItemTitle>Certificates</span>
-              </a>
-              <a mat-list-item routerLink="/users" (click)="sidenav.close()" *ngIf="isAdmin">
-                <mat-icon matListItemIcon>people</mat-icon>
-                <span matListItemTitle>User Management</span>
-              </a>
-              <a mat-list-item routerLink="/access-control" (click)="sidenav.close()" *ngIf="isAdmin">
-                <mat-icon matListItemIcon>security</mat-icon>
-                <span matListItemTitle>Access Control</span>
-              </a>
-              <a mat-list-item routerLink="/settings" (click)="sidenav.close()" *ngIf="isAdmin">
-                <mat-icon matListItemIcon>settings</mat-icon>
-                <span matListItemTitle>Settings</span>
-              </a>
-            </mat-nav-list>
-          </mat-sidenav>
-
-          <mat-sidenav-content>
-            <router-outlet></router-outlet>
-          </mat-sidenav-content>
-        </mat-sidenav-container>
-      </div>
-      
-      <router-outlet *ngIf="isLoginPage"></router-outlet>
+      <router-outlet ></router-outlet>
     </div>
   `,
   styles: [`
