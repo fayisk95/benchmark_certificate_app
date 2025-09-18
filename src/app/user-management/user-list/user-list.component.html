@@ -19,7 +19,7 @@
 
       <div class="table-container">
         <table mat-table [dataSource]="filteredUsers" class="user-table">
-          
+
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
             <td mat-cell *matCellDef="let user">
@@ -67,10 +67,7 @@
               <button mat-icon-button (click)="editUser(user)" color="primary" title="Edit User">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button 
-                mat-icon-button 
-                (click)="toggleUserStatus(user)" 
-                [color]="user.isActive ? 'warn' : 'accent'"
+              <button mat-icon-button (click)="toggleUserStatus(user)" [color]="user.isActive ? 'warn' : 'accent'"
                 [title]="user.isActive ? 'Deactivate User' : 'Activate User'">
                 <mat-icon>{{ user.isActive ? 'block' : 'check_circle' }}</mat-icon>
               </button>

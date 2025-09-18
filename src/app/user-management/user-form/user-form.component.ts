@@ -1,28 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UserRole } from '../../shared/models/user.model';
 
 @Component({
+  standalone: false,
   selector: 'app-user-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatSlideToggleModule
-  ],
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss']
 })
@@ -50,7 +33,7 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.userId;
-    
+
     if (this.isEdit) {
       this.loadUser();
       this.userForm.get('password')?.clearValidators();
@@ -74,7 +57,7 @@ export class UserFormComponent implements OnInit {
   onSubmit(): void {
     if (this.userForm.valid) {
       const formData = this.userForm.value;
-      
+
       if (!this.isEdit) {
         // Validate password confirmation
         if (formData.password !== formData.confirmPassword) {
@@ -84,7 +67,7 @@ export class UserFormComponent implements OnInit {
 
       // In real app, call API to save user
       console.log('Saving user:', formData);
-      
+
       this.router.navigate(['/dashboard/users']);
     }
   }

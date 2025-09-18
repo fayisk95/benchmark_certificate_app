@@ -3,6 +3,7 @@ import { PERMISSIONS } from '../../core/models/permission.model';
 import { AccessControlService } from '../services/access-control.service';
 
 @Component({
+  standalone: false,
   selector: 'app-access-control',
   templateUrl: './access-control.component.html',
   styleUrls: ['./access-control.component.scss']

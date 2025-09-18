@@ -1,24 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { PermissionsService } from '../../shared/services/permissions.service';
 import { UserRole, Permission, RolePermission } from '../../shared/models/user.model';
 
 @Component({
+  standalone: false,
   selector: 'app-permissions',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatChipsModule
-  ],
   templateUrl: './permissions.component.html',
   styleUrls: ['./permissions.component.scss']
 })
@@ -27,7 +13,7 @@ export class PermissionsComponent implements OnInit {
   availablePermissions: Permission[] = [];
   rolePermissions: RolePermission[] = [];
 
-  constructor(private permissionsService: PermissionsService) {}
+  constructor(private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
     this.availablePermissions = this.permissionsService.getAvailablePermissions();
@@ -35,8 +21,8 @@ export class PermissionsComponent implements OnInit {
       this.rolePermissions = permissions;
     });
   }
-  
- getPermissionName(permissionId: string): string {
+
+  getPermissionName(permissionId: string): string {
     const permission = this.availablePermissions.find(p => p.id === permissionId);
     return permission ? permission.name : permissionId;
   }
@@ -47,11 +33,11 @@ export class PermissionsComponent implements OnInit {
 
   togglePermission(role: UserRole, permissionId: string): void {
     const rolePermissionIndex = this.rolePermissions.findIndex(rp => rp.role === role);
-    
+
     if (rolePermissionIndex > -1) {
       const permissions = this.rolePermissions[rolePermissionIndex].permissions;
       const permissionIndex = permissions.indexOf(permissionId);
-      
+
       if (permissionIndex > -1) {
         permissions.splice(permissionIndex, 1);
       } else {
@@ -89,7 +75,7 @@ export class PermissionsComponent implements OnInit {
         permissions: ['issue-certificates', 'dashboard-access']
       }
     ];
-    
+
     this.rolePermissions = defaultPermissions;
   }
 }

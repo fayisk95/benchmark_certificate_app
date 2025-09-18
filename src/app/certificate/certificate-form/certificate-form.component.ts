@@ -1,33 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { CertificateService } from '../../core/services/certificate.service';
 import { BatchService } from '../../core/services/batch.service';
 import { Certificate, CertificateStatus } from '../../core/models/certificate.model';
 import { Batch } from '../../core/models/batch.model';
 
 @Component({
+  standalone: false,
   selector: 'app-certificate-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule
-  ],
   templateUrl: './certificate-form.component.html',
   styleUrls: ['./certificate-form.component.scss']
 })
@@ -63,7 +44,7 @@ export class CertificateFormComponent implements OnInit {
     this.certificateId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.certificateId;
     this.batches = this.batchService.batches();
-    
+
     if (this.isEdit) {
       this.loadCertificate();
     }
@@ -92,16 +73,16 @@ export class CertificateFormComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.certificateForm.valid) {
       this.isLoading = true;
-      
+
       try {
         const formData = this.certificateForm.value;
-        
+
         if (this.isEdit && this.certificateId) {
           await this.certificateService.updateCertificate(this.certificateId, formData);
         } else {
           await this.certificateService.createCertificate(formData);
         }
-        
+
         this.router.navigate(['/dashboard/certificates']);
       } catch (error) {
         console.error('Error saving certificate:', error);

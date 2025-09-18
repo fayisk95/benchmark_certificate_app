@@ -16,13 +16,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { BatchListComponent } from './components/batch-list/batch-list.component';
-import { BatchFormComponent } from './components/batch-form/batch-form.component';
+import { BatchListComponent } from './batch-list/batch-list.component';
+import { BatchFormComponent } from './batch-form/batch-form.component';
 
 @NgModule({
-  declarations: [
-    BatchListComponent,
-    BatchFormComponent
+  declarations: [BatchFormComponent, BatchListComponent
   ],
   imports: [
     CommonModule,

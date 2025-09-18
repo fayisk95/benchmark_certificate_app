@@ -1,40 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatMenuModule } from '@angular/material/menu';
 import { Certificate, CertificateStatus, AttachmentType } from '../../shared/models/certificate.model';
 
 @Component({
+  standalone: false,
   selector: 'app-certificate-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatMenuModule
-  ],
   templateUrl: './certificate-list.component.html',
   styleUrls: ['./certificate-list.component.scss']
 })
 export class CertificateListComponent implements OnInit {
   displayedColumns: string[] = ['certificateNumber', 'name', 'employer', 'trainingName', 'issueDate', 'dueDate', 'status', 'attachments', 'actions'];
-  
+
   public AttachmentType = AttachmentType;
-  
+
   certificates: Certificate[] = [
     {
       id: '1',
@@ -83,9 +61,9 @@ export class CertificateListComponent implements OnInit {
   statusFilter = '';
   statuses = Object.values(CertificateStatus);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
@@ -98,24 +76,24 @@ export class CertificateListComponent implements OnInit {
 
   applyAllFilters(searchValue: string = ''): void {
     this.filteredCertificates = this.certificates.filter(cert => {
-      const matchesSearch = !searchValue || 
+      const matchesSearch = !searchValue ||
         cert.certificateNumber.toLowerCase().includes(searchValue) ||
         cert.name.toLowerCase().includes(searchValue) ||
         cert.employer.toLowerCase().includes(searchValue);
-        
+
       const matchesStatus = !this.statusFilter || cert.status === this.statusFilter;
-      
+
       return matchesSearch && matchesStatus;
     });
   }
   getStatusClass(status: string): string {
-  switch (status) {
-    case 'Active': return 'active';
-    case 'Expired': return 'expired';
-    case 'Expiring Soon': return 'expiring';
-    default: return 'active';
+    switch (status) {
+      case 'Active': return 'active';
+      case 'Expired': return 'expired';
+      case 'Expiring Soon': return 'expiring';
+      default: return 'active';
+    }
   }
-}
   createCertificate(): void {
     this.router.navigate(['/dashboard/certificates/create']);
   }

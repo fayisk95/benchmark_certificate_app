@@ -1,28 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { filter } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatListModule,
-    MatMenuModule
-  ],
   template: `
     <div class="app-container">
       <div *ngIf="!isLoginPage">
@@ -115,10 +98,10 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
-  
+
   isLoginPage = false;
   currentUser = this.authService.currentUser;
-  
+
   get isAdmin(): boolean {
     return this.currentUser()?.role === 'Admin';
   }

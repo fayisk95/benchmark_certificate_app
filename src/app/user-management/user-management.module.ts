@@ -15,8 +15,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { UserListComponent } from './components/user-list/user-list.component';
-import { UserFormComponent } from './components/user-form/user-form.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserFormComponent } from './user-form/user-form.component';
+import { MatChip, MatChipSet } from "@angular/material/chips";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,9 @@ import { UserFormComponent } from './components/user-form/user-form.component';
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatChipSet,
+    MatChip
   ]
 })
 export class UserManagementModule { }

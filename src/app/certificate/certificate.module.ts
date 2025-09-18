@@ -17,15 +17,14 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { CertificateListComponent } from './components/certificate-list/certificate-list.component';
-import { CertificateFormComponent } from './components/certificate-form/certificate-form.component';
-import { CertificatePreviewComponent } from './components/certificate-preview/certificate-preview.component';
+import { CertificateListComponent } from './certificate-list/certificate-list.component';
+import { CertificateFormComponent } from './certificate-form/certificate-form.component';
+import { MatMenu, MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [
     CertificateListComponent,
-    CertificateFormComponent,
-    CertificatePreviewComponent
+    CertificateFormComponent
   ],
   imports: [
     CommonModule,
@@ -33,8 +32,7 @@ import { CertificatePreviewComponent } from './components/certificate-preview/ce
     RouterModule.forChild([
       { path: '', component: CertificateListComponent },
       { path: 'create', component: CertificateFormComponent },
-      { path: 'edit/:id', component: CertificateFormComponent },
-      { path: 'preview/:id', component: CertificatePreviewComponent }
+      { path: 'edit/:id', component: CertificateFormComponent }
     ]),
     // Material modules
     MatCardModule,
@@ -48,7 +46,9 @@ import { CertificatePreviewComponent } from './components/certificate-preview/ce
     MatNativeDateModule,
     MatChipsModule,
     MatTabsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatMenu,
+    MatMenuModule
   ]
 })
 export class CertificateModule { }
