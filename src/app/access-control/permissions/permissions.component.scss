@@ -91,9 +91,11 @@
         .permission-chip {
           margin-right: 8px;
           margin-bottom: 4px;
-          background-color: var(--accent-color);
-          color: white;
+          background-color: transparent !important;
+          color: var(--accent-color);
+          border: 1px solid var(--accent-color);
           font-size: 12px;
+          font-weight: 500;
         }
       }
     }

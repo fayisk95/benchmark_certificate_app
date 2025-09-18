@@ -169,3 +169,12 @@ body {
 .mat-mdc-form-field .mat-mdc-form-field-input-control {
   color: var(--text-color) !important;
 }
+
+/* Fix chip visibility issues */
+.mat-mdc-chip {
+  color: inherit !important;
+}
+
+.mat-mdc-chip .mdc-evolution-chip__text-label {
+  color: inherit !important;
+}

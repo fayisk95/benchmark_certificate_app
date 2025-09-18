@@ -70,20 +70,23 @@
       min-height: 24px;
       display: inline-flex;
       align-items: center;
+      border: 1px solid;
+      background-color: transparent !important;
+      font-weight: 500;
 
       &.type-onsite {
-        background-color: var(--primary-color);
-        color: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
       }
 
       &.type-hybrid {
-        background-color: var(--accent-color);
-        color: white;
+        color: var(--accent-color);
+        border-color: var(--accent-color);
       }
 
       &.type-online {
-        background-color: #ff6b35;
-        color: white;
+        color: #ff6b35;
+        border-color: #ff6b35;
       }
     }
 
@@ -92,15 +95,18 @@
       min-height: 24px;
       display: inline-flex;
       align-items: center;
+      border: 1px solid;
+      background-color: transparent !important;
+      font-weight: 500;
 
       &.cert-fire {
-        background-color: #ff6b35;
-        color: white;
+        color: #ff6b35;
+        border-color: #ff6b35;
       }
 
       &.cert-water {
-        background-color: #1976d2;
-        color: white;
+        color: #1976d2;
+        border-color: #1976d2;
       }
     }
 

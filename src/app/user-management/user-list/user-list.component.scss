@@ -51,42 +51,49 @@
       min-height: 24px;
       display: inline-flex;
       align-items: center;
+      border: 1px solid;
+      background-color: transparent !important;
+      font-weight: 500;
       
       &.role-admin {
-        background-color: #ff6b35;
-        color: white;
+        color: #ff6b35;
+        border-color: #ff6b35;
       }
       
       &.role-supervisor {
-        background-color: var(--primary-color);
-        color: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
       }
       
       &.role-instructor {
-        background-color: var(--accent-color);
-        color: white;
+        color: var(--accent-color);
+        border-color: var(--accent-color);
       }
       
       &.role-staff {
-        background-color: #666;
-        color: white;
+        color: #666;
+        border-color: #666;
       }
     }
     
     .status-active {
-      background-color: var(--accent-color);
-      color: white;
+      background-color: transparent !important;
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
       min-height: 24px;
       display: inline-flex;
       align-items: center;
+      font-weight: 500;
     }
     
     .status-inactive {
-      background-color: #ccc;
+      background-color: transparent !important;
       color: #666;
+      border: 1px solid #666;
       min-height: 24px;
       display: inline-flex;
       align-items: center;
+      font-weight: 500;
     }
     
     th {
