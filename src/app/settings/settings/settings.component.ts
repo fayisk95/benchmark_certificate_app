@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SettingsService, AppSettings } from '../../core/services/settings.service';
 
 @Component({
   standalone: false,
@@ -9,8 +10,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class SettingsComponent implements OnInit {
   settingsForm: FormGroup;
+  loading = false;
+  saving = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private settingsService: SettingsService
+  ) {
     this.settingsForm = this.fb.group({
       // Certificate numbering
       certificateNumberFormat: ['FS-{YYYY}-{####}', Validators.required],
@@ -38,12 +44,31 @@ export class SettingsComponent implements OnInit {
   }
 
   loadSettings(): void {
-    // In real app, load from service/API
-    const savedSettings = localStorage.getItem('appSettings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      this.settingsForm.patchValue(settings);
-    }
+    this.loading = true;
+    this.settingsService.getSettings().subscribe({
+      next: (response) => {
+        this.populateFormFromSettings(response.settings);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading settings:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  private populateFormFromSettings(settings: AppSettings): void {
+    this.settingsForm.patchValue({
+      certificateNumberFormat: settings['certificate_number_format']?.value || 'FS-{YYYY}-{####}',
+      certificateStartNumber: parseInt(settings['certificate_start_number']?.value || '1'),
+      batchNumberFormat: settings['batch_number_format']?.value || 'BTH-{YYYY}-{###}',
+      batchStartNumber: parseInt(settings['batch_start_number']?.value || '1'),
+      expiryWarningDays: parseInt(settings['expiry_warning_days']?.value || '30'),
+      defaultDashboardView: 'cards',
+      itemsPerPage: 20,
+      enableExpiryNotifications: true,
+      notificationEmail: settings['notification_email']?.value || 'admin@cms.com'
+    });
   }
 
   generateSampleCertNumber(): string {
@@ -66,24 +91,43 @@ export class SettingsComponent implements OnInit {
 
   onSubmit(): void {
     if (this.settingsForm.valid) {
-      const settings = this.settingsForm.value;
-      localStorage.setItem('appSettings', JSON.stringify(settings));
-      // In real app, save to API
-      console.log('Settings saved:', settings);
+      this.saving = true;
+      const formValues = this.settingsForm.value;
+      
+      // Map form values to API format
+      const settingsToSave = {
+        certificate_number_format: formValues.certificateNumberFormat,
+        certificate_start_number: formValues.certificateStartNumber.toString(),
+        batch_number_format: formValues.batchNumberFormat,
+        batch_start_number: formValues.batchStartNumber.toString(),
+        expiry_warning_days: formValues.expiryWarningDays.toString(),
+        notification_email: formValues.notificationEmail
+      };
+
+      this.settingsService.updateSettings(settingsToSave).subscribe({
+        next: (response) => {
+          console.log('Settings saved successfully');
+          this.saving = false;
+          // Show success message
+        },
+        error: (error) => {
+          console.error('Error saving settings:', error);
+          this.saving = false;
+          // Show error message
+        }
+      });
     }
   }
 
   resetToDefaults(): void {
-    this.settingsForm.reset({
-      certificateNumberFormat: 'FS-{YYYY}-{####}',
-      certificateStartNumber: 1,
-      batchNumberFormat: 'BTH-{YYYY}-{###}',
-      batchStartNumber: 1,
-      expiryWarningDays: 30,
-      defaultDashboardView: 'cards',
-      itemsPerPage: 20,
-      enableExpiryNotifications: true,
-      notificationEmail: 'admin@cms.com'
+    this.settingsService.resetSettings().subscribe({
+      next: (response) => {
+        this.populateFormFromSettings(response.settings);
+        console.log('Settings reset to defaults');
+      },
+      error: (error) => {
+        console.error('Error resetting settings:', error);
+      }
     });
   }
 }

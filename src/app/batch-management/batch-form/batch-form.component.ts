@@ -21,7 +21,7 @@ export class BatchFormComponent implements OnInit {
 
   batchTypes: BatchType[] = ['Onsite', 'Hybrid', 'Online'];
   certificateTypes: CertificateType[] = ['Fire & Safety', 'Water Safety'];
-  instructors = this.userService.users().filter(u => u.role === 'Instructor' && u.isActive);
+  instructors: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -57,57 +57,76 @@ export class BatchFormComponent implements OnInit {
       this.loadBatch();
     }
 
+    this.loadInstructors();
+
     if (this.canManualOverride) {
       this.batchForm.get('batchNumber')?.enable();
     }
   }
 
+  private loadInstructors(): void {
+    this.userService.getInstructors().subscribe({
+      next: (instructors) => {
+        this.instructors = instructors;
+      },
+      error: (error) => {
+        console.error('Error loading instructors:', error);
+      }
+    });
+  }
+
   private loadBatch() {
     if (this.batchId) {
-      const batch = this.batchService.getBatchById(this.batchId);
-      if (batch) {
-        this.batchForm.patchValue({
-          companyName: batch.companyName,
-          referredBy: batch.referredBy,
-          numberOfParticipants: batch.numberOfParticipants,
-          batchType: batch.batchType,
-          certificateType: batch.certificateType,
-          startDate: batch.startDate,
-          endDate: batch.endDate,
-          instructorId: batch.instructorId,
-          description: batch.description,
-          batchNumber: batch.batchNumber
-        });
-      }
+      this.batchService.getBatchByIdFromApi(this.batchId).subscribe({
+        next: (batch) => {
+          this.batchForm.patchValue({
+            companyName: batch.companyName,
+            referredBy: batch.referredBy,
+            numberOfParticipants: batch.numberOfParticipants,
+            batchType: batch.batchType,
+            certificateType: batch.certificateType,
+            startDate: batch.startDate,
+            endDate: batch.endDate,
+            instructorId: batch.instructorId,
+            description: batch.description,
+            batchNumber: batch.batchNumber
+          });
+        },
+        error: (error) => {
+          console.error('Error loading batch:', error);
+          this.router.navigate(['/dashboard/batches']);
+        }
+      });
     }
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.batchForm.valid) {
       this.isLoading = true;
 
-      try {
-        const formValue = this.batchForm.value;
+      const formValue = this.batchForm.value;
 
-        // Validate date range
-        if (formValue.startDate >= formValue.endDate) {
-          alert('End date must be after start date!');
-          this.isLoading = false;
-          return;
-        }
-
-        if (this.isEditMode && this.batchId) {
-          await this.batchService.updateBatch(this.batchId, formValue);
-        } else {
-          await this.batchService.createBatch(formValue);
-        }
-
-        this.router.navigate(['/dashboard/batches']);
-      } catch (error) {
-        alert('An error occurred while saving the batch.');
-      } finally {
+      // Validate date range
+      if (formValue.startDate >= formValue.endDate) {
+        alert('End date must be after start date!');
         this.isLoading = false;
+        return;
       }
+
+      const saveOperation = this.isEditMode && this.batchId
+        ? this.batchService.updateBatch(this.batchId, formValue)
+        : this.batchService.createBatch(formValue);
+
+      saveOperation.subscribe({
+        next: () => {
+          this.router.navigate(['/dashboard/batches']);
+        },
+        error: (error) => {
+          console.error('Error saving batch:', error);
+          alert('An error occurred while saving the batch.');
+          this.isLoading = false;
+        }
+      });
     }
   }
 

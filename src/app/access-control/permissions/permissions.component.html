@@ -17,12 +17,10 @@
             <div class="permission-name">{{ permission.name }}</div>
             <div class="permission-description">{{ permission.description }}</div>
           </div>
-          
+
           <div class="role-checkbox" *ngFor="let role of userRoles">
-            <mat-checkbox
-              [checked]="hasPermission(role, permission.id)"
-              (change)="togglePermission(role, permission.id)"
-              [color]="'accent'">
+            <mat-checkbox [checked]="hasPermission(role, permission.id)"
+              (change)="togglePermission(role, permission.id)" [color]="'accent'">
             </mat-checkbox>
           </div>
         </div>
@@ -33,8 +31,7 @@
         <div class="role-summary" *ngFor="let rolePermission of rolePermissions">
           <h4 class="role-name">{{ rolePermission.role }}</h4>
           <mat-chip-set class="permission-chips">
-            <mat-chip *ngFor="let permissionId of rolePermission.permissions" 
-                      class="permission-chip">
+            <mat-chip *ngFor="let permissionId of rolePermission.permissions" class="permission-chip">
               {{ getPermissionName(permissionId) }}
             </mat-chip>
           </mat-chip-set>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PermissionsService } from '../../shared/services/permissions.service';
+import { SettingsService, RolePermissions } from '../../core/services/settings.service';
 import { UserRole, Permission, RolePermission } from '../../shared/models/user.model';
 
 @Component({
@@ -10,72 +10,88 @@ import { UserRole, Permission, RolePermission } from '../../shared/models/user.m
 })
 export class PermissionsComponent implements OnInit {
   userRoles = Object.values(UserRole);
-  availablePermissions: Permission[] = [];
-  rolePermissions: RolePermission[] = [];
+  availablePermissions: any[] = []
+  rolePermissions: RolePermissions = {};
+  loading = false;
+  saving = false;
 
-  constructor(private permissionsService: PermissionsService) { }
+  constructor(private settingsService: SettingsService) { }
 
   ngOnInit(): void {
-    this.availablePermissions = this.permissionsService.getAvailablePermissions();
-    this.permissionsService.getRolePermissions().subscribe(permissions => {
-      this.rolePermissions = permissions;
+    this.loadRolePermissions();
+  }
+
+  loadRolePermissions(): void {
+    this.loading = true;
+    this.settingsService.getRolePermissions().subscribe({
+      next: (response) => {
+        this.rolePermissions = response.rolePermissions;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading role permissions:', error);
+        this.loading = false;
+      }
     });
   }
 
   getPermissionName(permissionId: string): string {
-    const permission = this.availablePermissions.find(p => p.id === permissionId);
-    return permission ? permission.name : permissionId;
+    const permissionNames: { [key: string]: string } = {
+      'manage-users': 'Manage Users',
+      'manage-batches': 'Manage Batches',
+      'issue-certificates': 'Issue Certificates',
+      'view-reports': 'View Reports',
+      'manual-number-entry': 'Manual Number Entry',
+      'dashboard-access': 'Dashboard Access'
+    };
+    return permissionNames[permissionId] || permissionId;
   }
+
   hasPermission(role: UserRole, permissionId: string): boolean {
-    const rolePermission = this.rolePermissions.find(rp => rp.role === role);
-    return rolePermission ? rolePermission.permissions.includes(permissionId) : false;
+    const permissions = this.rolePermissions[role];
+    return permissions ? permissions.includes(permissionId) : false;
   }
 
   togglePermission(role: UserRole, permissionId: string): void {
-    const rolePermissionIndex = this.rolePermissions.findIndex(rp => rp.role === role);
+    if (!this.rolePermissions[role]) {
+      this.rolePermissions[role] = [];
+    }
 
-    if (rolePermissionIndex > -1) {
-      const permissions = this.rolePermissions[rolePermissionIndex].permissions;
-      const permissionIndex = permissions.indexOf(permissionId);
+    const permissions = this.rolePermissions[role];
+    const permissionIndex = permissions.indexOf(permissionId);
 
-      if (permissionIndex > -1) {
-        permissions.splice(permissionIndex, 1);
-      } else {
-        permissions.push(permissionId);
-      }
+    if (permissionIndex > -1) {
+      permissions.splice(permissionIndex, 1);
     } else {
-      this.rolePermissions.push({
-        role,
-        permissions: [permissionId]
-      });
+      permissions.push(permissionId);
     }
   }
 
   savePermissions(): void {
-    this.permissionsService.updateRolePermissions(this.rolePermissions);
-    // Show success message
+    this.saving = true;
+    this.settingsService.updateRolePermissions(this.rolePermissions).subscribe({
+      next: (response) => {
+        console.log('Permissions saved successfully');
+        this.saving = false;
+        // Show success message
+      },
+      error: (error) => {
+        console.error('Error saving permissions:', error);
+        this.saving = false;
+        // Show error message
+      }
+    });
   }
 
   resetToDefaults(): void {
-    const defaultPermissions: RolePermission[] = [
-      {
-        role: UserRole.ADMIN,
-        permissions: this.availablePermissions.map(p => p.id)
+    this.settingsService.resetRolePermissions().subscribe({
+      next: (response) => {
+        this.rolePermissions = response.rolePermissions;
+        console.log('Permissions reset to defaults');
       },
-      {
-        role: UserRole.SUPERVISOR,
-        permissions: ['manage-batches', 'issue-certificates', 'view-reports', 'manual-number-entry', 'dashboard-access']
-      },
-      {
-        role: UserRole.INSTRUCTOR,
-        permissions: ['issue-certificates', 'dashboard-access']
-      },
-      {
-        role: UserRole.STAFF,
-        permissions: ['issue-certificates', 'dashboard-access']
+      error: (error) => {
+        console.error('Error resetting permissions:', error);
       }
-    ];
-
-    this.rolePermissions = defaultPermissions;
+    });
   }
 }

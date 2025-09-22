@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserRole } from '../../shared/models/user.model';
+import { UserService } from '../services/user.service';
 
 @Component({
   standalone: false,
@@ -14,11 +15,13 @@ export class UserFormComponent implements OnInit {
   isEdit = false;
   userId: string | null = null;
   userRoles = Object.values(UserRole);
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -42,20 +45,27 @@ export class UserFormComponent implements OnInit {
   }
 
   loadUser(): void {
-    // In real app, load user from service
-    // For demo, populate with sample data
-    if (this.userId === '2') {
-      this.userForm.patchValue({
-        name: 'John Supervisor',
-        email: 'supervisor@cms.com',
-        role: UserRole.SUPERVISOR,
-        isActive: true
+    if (this.userId) {
+      this.userService.getUserByIdFromApi(this.userId).subscribe({
+        next: (user) => {
+          this.userForm.patchValue({
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isActive: user.isActive
+          });
+        },
+        error: (error) => {
+          console.error('Error loading user:', error);
+          this.router.navigate(['/dashboard/users']);
+        }
       });
     }
   }
 
   onSubmit(): void {
     if (this.userForm.valid) {
+      this.loading = true;
       const formData = this.userForm.value;
 
       if (!this.isEdit) {
@@ -65,10 +75,31 @@ export class UserFormComponent implements OnInit {
         }
       }
 
-      // In real app, call API to save user
-      console.log('Saving user:', formData);
+      const saveOperation = this.isEdit && this.userId
+        ? this.userService.updateUser(this.userId, formData)
+        : this.userService.createUser(formData);
 
-      this.router.navigate(['/dashboard/users']);
+      saveOperation.subscribe({
+        next: () => {
+          this.router.navigate(['/dashboard/users']);
+        },
+        error: (error) => {
+          console.error('Error saving user:', error);
+          this.loading = false;
+          // Handle specific error cases
+          if (error.message && error.message.includes('Email already exists')) {
+            this.userForm.get('email')?.setErrors({ emailExists: true });
+          }
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.userForm.controls).forEach(key => {
+        this.userForm.get(key)?.markAsTouched();
+      });
     }
   }
 

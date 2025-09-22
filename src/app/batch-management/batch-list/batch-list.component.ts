@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Batch, BatchType, CertificateType } from '../../shared/models/batch.model';
+import { BatchService } from '../../core/services/batch.service';
 
 @Component({
   standalone: false,
@@ -11,40 +12,10 @@ import { Batch, BatchType, CertificateType } from '../../shared/models/batch.mod
 export class BatchListComponent implements OnInit {
   displayedColumns: string[] = ['batchNumber', 'companyName', 'participants', 'type', 'certificateType', 'startDate', 'instructor', 'actions'];
 
-  batches: Batch[] = [
-    {
-      id: '1',
-      batchNumber: 'BTH-2024-001',
-      companyName: 'ABC Construction Ltd',
-      referredBy: 'John Smith',
-      numberOfParticipants: 25,
-      batchType: BatchType.ONSITE,
-      certificateType: CertificateType.FIRE_SAFETY,
-      batchStartDate: new Date('2024-01-15'),
-      batchEndDate: new Date('2024-01-17'),
-      instructor: 'Jane Instructor',
-      description: 'Fire safety training for construction workers',
-      reservedCertNumbers: Array.from({ length: 25 }, (_, i) => `FS-2024-${String(i + 1).padStart(4, '0')}`),
-      createdAt: new Date('2024-01-01')
-    },
-    {
-      id: '2',
-      batchNumber: 'BTH-2024-002',
-      companyName: 'Marine Services Co',
-      referredBy: 'Sarah Johnson',
-      numberOfParticipants: 15,
-      batchType: BatchType.HYBRID,
-      certificateType: CertificateType.WATER_SAFETY,
-      batchStartDate: new Date('2024-02-01'),
-      batchEndDate: new Date('2024-02-03'),
-      instructor: 'Mike Instructor',
-      description: 'Water safety training for marine workers',
-      reservedCertNumbers: Array.from({ length: 15 }, (_, i) => `WS-2024-${String(i + 1).padStart(4, '0')}`),
-      createdAt: new Date('2024-01-20')
-    }
-  ];
+  batches: Batch[] = [];
+  filteredBatches: Batch[] = [];
+  loading = false;
 
-  filteredBatches = [...this.batches];
   filterType = '';
   filterCertType = '';
 
@@ -55,9 +26,29 @@ export class BatchListComponent implements OnInit {
     return certType.toLowerCase().includes('fire') ? 'fire' : 'water';
   }
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private batchService: BatchService
+  ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.loadBatches();
+  }
+
+  loadBatches(): void {
+    this.loading = true;
+    this.batchService.loadBatches().subscribe({
+      next: (response) => {
+        this.batches = response.batches;
+        this.filteredBatches = [...this.batches];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading batches:', error);
+        this.loading = false;
+      }
+    });
+  }
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();

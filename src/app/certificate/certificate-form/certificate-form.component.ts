@@ -43,52 +43,68 @@ export class CertificateFormComponent implements OnInit {
   ngOnInit(): void {
     this.certificateId = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!this.certificateId;
-    this.batches = this.batchService.batches();
+    this.loadBatches();
 
     if (this.isEdit) {
       this.loadCertificate();
     }
   }
 
+  loadBatches(): void {
+    this.batchService.loadBatches().subscribe({
+      next: (response) => {
+        this.batches = response.batches;
+      },
+      error: (error) => {
+        console.error('Error loading batches:', error);
+      }
+    });
+  }
+
   loadCertificate(): void {
     if (this.certificateId) {
-      const certificate = this.certificateService.getCertificateById(this.certificateId);
-      if (certificate) {
-        this.certificateForm.patchValue({
-          batchId: certificate.batchId,
-          name: certificate.name,
-          nationality: certificate.nationality,
-          eidLicense: certificate.eidLicense,
-          employer: certificate.employer,
-          trainingName: certificate.trainingName,
-          trainingDate: certificate.trainingDate,
-          issueDate: certificate.issueDate,
-          dueDate: certificate.dueDate,
-          certificateNumber: certificate.certificateNumber
-        });
-      }
+      this.certificateService.getCertificateByIdFromApi(this.certificateId).subscribe({
+        next: (certificate) => {
+          this.certificateForm.patchValue({
+            batchId: certificate.batchId,
+            name: certificate.name,
+            nationality: certificate.nationality,
+            eidLicense: certificate.eidLicense,
+            employer: certificate.employer,
+            trainingName: certificate.trainingName,
+            trainingDate: certificate.trainingDate,
+            issueDate: certificate.issueDate,
+            dueDate: certificate.dueDate,
+            certificateNumber: certificate.certificateNumber
+          });
+        },
+        error: (error) => {
+          console.error('Error loading certificate:', error);
+          this.router.navigate(['/dashboard/certificates']);
+        }
+      });
     }
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.certificateForm.valid) {
       this.isLoading = true;
 
-      try {
-        const formData = this.certificateForm.value;
+      const formData = this.certificateForm.value;
 
-        if (this.isEdit && this.certificateId) {
-          await this.certificateService.updateCertificate(this.certificateId, formData);
-        } else {
-          await this.certificateService.createCertificate(formData);
+      const saveOperation = this.isEdit && this.certificateId
+        ? this.certificateService.updateCertificate(this.certificateId, formData)
+        : this.certificateService.createCertificate(formData);
+
+      saveOperation.subscribe({
+        next: () => {
+          this.router.navigate(['/dashboard/certificates']);
+        },
+        error: (error) => {
+          console.error('Error saving certificate:', error);
+          this.isLoading = false;
         }
-
-        this.router.navigate(['/dashboard/certificates']);
-      } catch (error) {
-        console.error('Error saving certificate:', error);
-      } finally {
-        this.isLoading = false;
-      }
+      });
     }
   }
 

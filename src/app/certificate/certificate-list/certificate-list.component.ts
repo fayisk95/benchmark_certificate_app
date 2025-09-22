@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Certificate, CertificateStatus, AttachmentType } from '../../shared/models/certificate.model';
+import { CertificateService } from '../../core/services/certificate.service';
 
 @Component({
   standalone: false,
@@ -13,57 +14,36 @@ export class CertificateListComponent implements OnInit {
 
   public AttachmentType = AttachmentType;
 
-  certificates: Certificate[] = [
-    {
-      id: '1',
-      certificateNumber: 'FS-2024-0001',
-      batchId: '1',
-      name: 'Ahmed Al Mansouri',
-      nationality: 'UAE',
-      eidLicense: '784-1234-1234567-1',
-      employer: 'ABC Construction Ltd',
-      trainingName: 'Fire Safety Training',
-      trainingDate: new Date('2024-01-15'),
-      issueDate: new Date('2024-01-17'),
-      dueDate: new Date('2025-01-17'),
-      status: CertificateStatus.ACTIVE,
-      attachments: [
-        {
-          id: '1',
-          certificateId: '1',
-          fileName: 'eid_ahmed.pdf',
-          fileType: AttachmentType.EID,
-          fileUrl: '/uploads/eid_ahmed.pdf',
-          uploadedAt: new Date()
-        }
-      ],
-      createdAt: new Date('2024-01-17')
-    },
-    {
-      id: '2',
-      certificateNumber: 'WS-2024-0001',
-      batchId: '2',
-      name: 'John Smith',
-      nationality: 'UK',
-      eidLicense: 'DL-12345678',
-      employer: 'Marine Services Co',
-      trainingName: 'Water Safety Training',
-      trainingDate: new Date('2024-02-01'),
-      issueDate: new Date('2024-02-03'),
-      dueDate: new Date('2024-03-03'),
-      status: CertificateStatus.EXPIRING_SOON,
-      attachments: [],
-      createdAt: new Date('2024-02-03')
-    }
-  ];
+  certificates: Certificate[] = [];
+  filteredCertificates: Certificate[] = [];
+  loading = false;
 
-  filteredCertificates = [...this.certificates];
   statusFilter = '';
   statuses = Object.values(CertificateStatus);
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private certificateService: CertificateService
+  ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.loadCertificates();
+  }
+
+  loadCertificates(): void {
+    this.loading = true;
+    this.certificateService.loadCertificates().subscribe({
+      next: (response) => {
+        this.certificates = response.certificates;
+        this.filteredCertificates = [...this.certificates];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading certificates:', error);
+        this.loading = false;
+      }
+    });
+  }
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
@@ -113,7 +93,7 @@ export class CertificateListComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    // Export filtered certificates to Excel
+    // TODO: Implement Excel export functionality
     console.log('Export to Excel:', this.filteredCertificates);
   }
 
@@ -124,8 +104,8 @@ export class CertificateListComponent implements OnInit {
   downloadAttachment(certificate: Certificate, type: AttachmentType): void {
     const attachment = certificate.attachments?.find(att => att.fileType === type);
     if (attachment) {
-      // Download attachment
-      console.log('Download attachment:', attachment);
+      // TODO: Implement attachment download
+      window.open(attachment.fileUrl, '_blank');
     }
   }
 }
