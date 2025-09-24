@@ -11,16 +11,16 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Company Name</mat-label>
-            <input matInput formControlName="companyName" placeholder="Enter company name">
-            <mat-error *ngIf="batchForm.get('companyName')?.hasError('required')">
+            <input matInput formControlName="company_name" placeholder="Enter company name">
+            <mat-error *ngIf="batchForm.get('company_name')?.hasError('required')">
               Company name is required
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Referred By</mat-label>
-            <input matInput formControlName="referredBy" placeholder="Enter referrer name">
-            <mat-error *ngIf="batchForm.get('referredBy')?.hasError('required')">
+            <input matInput formControlName="referred_by" placeholder="Enter referrer name">
+            <mat-error *ngIf="batchForm.get('referred_by')?.hasError('required')">
               Referrer name is required
             </mat-error>
           </mat-form-field>
@@ -31,21 +31,21 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Number of Participants</mat-label>
-            <input matInput type="number" formControlName="numberOfParticipants" min="1" max="100">
-            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('required')">
+            <input matInput type="number" formControlName="number_of_participants" min="1" max="100">
+            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('required')">
               Number of participants is required
             </mat-error>
-            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('min')">
+            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('min')">
               At least 1 participant required
             </mat-error>
-            <mat-error *ngIf="batchForm.get('numberOfParticipants')?.hasError('max')">
+            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('max')">
               Maximum 100 participants allowed
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline" *ngIf="canManualOverride">
             <mat-label>Batch Number (Optional)</mat-label>
-            <input matInput formControlName="batchNumber" placeholder="Auto-generated if empty">
+            <input matInput formControlName="batch_number" placeholder="Auto-generated if empty">
             <mat-hint>Leave empty for auto-generation</mat-hint>
           </mat-form-field>
         </div>
@@ -53,7 +53,7 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Batch Type</mat-label>
-            <mat-select formControlName="batchType">
+            <mat-select formControlName="batch_type">
               <mat-option *ngFor="let type of batchTypes" [value]="type">
                 {{ type }}
               </mat-option>
@@ -62,7 +62,7 @@
 
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Certificate Type</mat-label>
-            <mat-select formControlName="certificateType">
+            <mat-select formControlName="certificate_type">
               <mat-option *ngFor="let type of certificateTypes" [value]="type">
                 {{ type }}
               </mat-option>
@@ -75,20 +75,20 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <input matInput [matDatepicker]="startPicker" formControlName="start_date">
             <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
             <mat-datepicker #startPicker></mat-datepicker>
-            <mat-error *ngIf="batchForm.get('startDate')?.hasError('required')">
+            <mat-error *ngIf="batchForm.get('start_date')?.hasError('required')">
               Start date is required
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <input matInput [matDatepicker]="endPicker" formControlName="end_date">
             <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
             <mat-datepicker #endPicker></mat-datepicker>
-            <mat-error *ngIf="batchForm.get('endDate')?.hasError('required')">
+            <mat-error *ngIf="batchForm.get('end_date')?.hasError('required')">
               End date is required
             </mat-error>
           </mat-form-field>
@@ -99,12 +99,12 @@
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Instructor</mat-label>
-            <mat-select formControlName="instructorId">
+            <mat-select formControlName="instructor_id">
               <mat-option *ngFor="let instructor of instructors" [value]="instructor.id">
                 {{ instructor.name }} ({{ instructor.email }})
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="batchForm.get('instructorId')?.hasError('required')">
+            <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
               Please select an instructor
             </mat-error>
           </mat-form-field>

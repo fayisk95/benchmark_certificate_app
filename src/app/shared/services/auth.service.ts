@@ -1,22 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
-import { UserRole } from '../../core/models/user.model';
-import { User } from '../models/user.model';
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  message: string;
-  token: string;
-  user: User;
-}
+import { User, UserRole, LoginRequest, LoginResponse } from '../models/user.model';
 
 interface ProfileResponse {
   user: User;
@@ -28,6 +15,7 @@ interface ProfileResponse {
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+
   constructor(
     private apiService: ApiService,
     private router: Router
@@ -37,19 +25,20 @@ export class AuthService {
 
   private initializeAuth(): void {
     const token = localStorage.getItem('authToken');
-    if (token) {
-      this.loadUserProfile().subscribe({
-        next: (response) => {
-          this.currentUserSubject.next(response.user);
-        },
-        error: () => {
-          this.logout();
-        }
-      });
+    const userStr = localStorage.getItem('currentUser');
+    
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        this.logout();
+      }
     }
   }
 
-  login(email: string, password: string): Observable<any> {
+  login(email: string, password: string): Observable<User | null> {
     const loginData: LoginRequest = { email, password };
 
     return this.apiService.post<LoginResponse>('/auth/login', loginData).pipe(
@@ -58,12 +47,11 @@ export class AuthService {
         localStorage.setItem('currentUser', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
       }),
-      catchError((error: HttpErrorResponse) => {
+      map(response => response.user),
+      catchError((error) => {
         console.error('Login error:', error);
-        return throwError(() => error);
+        return of(null);
       })
-    ).pipe(
-      catchError(() => of(null))
     );
   }
 
@@ -95,6 +83,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('authToken') && this.currentUserSubject.value !== null;
+  }
+
+  isAuthenticated(): boolean {
+    return this.isLoggedIn();
   }
 
   hasRole(role: UserRole): boolean {

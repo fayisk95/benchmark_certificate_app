@@ -45,7 +45,7 @@ const upload = multer({
 const generateCertificateNumber = async (certificateType) => {
   const year = new Date().getFullYear();
   const prefix = certificateType === 'Fire & Safety' ? 'FS' : 'WS';
-  
+
   // Get the last certificate number for this type and year
   const [rows] = await db.execute(
     'SELECT certificate_number FROM certificates WHERE certificate_number LIKE ? ORDER BY certificate_number DESC LIMIT 1',
@@ -117,14 +117,14 @@ router.get('/', authenticateToken, requirePermission('issue-certificates'), asyn
        LEFT JOIN batches b ON c.batch_id = b.id 
        ${whereClause}
        ORDER BY c.created_at DESC 
-       LIMIT ? OFFSET ?`,
-      [...queryParams, parseInt(limit), parseInt(offset)]
+       LIMIT ${limit} OFFSET ${offset}`,
+      [...queryParams]
     );
 
     // Get attachments for each certificate
     const certificateIds = rows.map(cert => cert.id);
     let attachments = [];
-    
+
     if (certificateIds.length > 0) {
       const placeholders = certificateIds.map(() => '?').join(',');
       const [attachmentRows] = await db.execute(
@@ -427,7 +427,7 @@ router.post('/:id/attachments', authenticateToken, requirePermission('issue-cert
       if (fs.existsSync(oldFilePath)) {
         fs.unlinkSync(oldFilePath);
       }
-      
+
       await db.execute(
         'DELETE FROM certificate_attachments WHERE id = ?',
         [existingAttachment[0].id]
@@ -436,7 +436,7 @@ router.post('/:id/attachments', authenticateToken, requirePermission('issue-cert
 
     // Save attachment record
     const relativePath = path.join('uploads', 'certificates', req.file.filename);
-    
+
     const [result] = await db.execute(
       'INSERT INTO certificate_attachments (certificate_id, file_name, file_type, file_path, file_size) VALUES (?, ?, ?, ?, ?)',
       [id, req.file.originalname, file_type, relativePath, req.file.size]
@@ -455,12 +455,12 @@ router.post('/:id/attachments', authenticateToken, requirePermission('issue-cert
 
   } catch (error) {
     console.error('Upload attachment error:', error);
-    
+
     // Clean up uploaded file if database operation failed
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-    
+
     res.status(500).json({ error: 'Failed to upload attachment' });
   }
 });
@@ -512,12 +512,12 @@ router.post('/update-statuses', authenticateToken, requirePermission('issue-cert
 
     for (const cert of certificates) {
       const newStatus = calculateStatus(cert.due_date);
-      
+
       await db.execute(
         'UPDATE certificates SET status = ? WHERE id = ?',
         [newStatus, cert.id]
       );
-      
+
       updatedCount++;
     }
 

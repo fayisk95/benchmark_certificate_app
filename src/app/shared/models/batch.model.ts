@@ -1,17 +1,20 @@
 export interface Batch {
-  id: string;
-  batchNumber: string;
-  companyName: string;
-  referredBy: string;
-  numberOfParticipants: number;
-  batchType: BatchType;
-  certificateType: CertificateType;
-  batchStartDate: Date;
-  batchEndDate: Date;
-  instructor: string;
+  id: number;
+  batch_number: string;
+  company_name: string;
+  referred_by: string;
+  number_of_participants: number;
+  batch_type: BatchType;
+  certificate_type: CertificateType;
+  start_date: string;
+  end_date: string;
+  instructor_id: number;
+  instructor_name?: string;
+  instructor_email?: string;
   description: string;
-  reservedCertNumbers: string[];
-  createdAt: Date;
+  reserved_cert_numbers: string[];
+  created_at: string;
+  updated_at: string;
 }
 
 export enum BatchType {
@@ -23,4 +26,29 @@ export enum BatchType {
 export enum CertificateType {
   FIRE_SAFETY = 'Fire & Safety',
   WATER_SAFETY = 'Water Safety'
+}
+
+export interface CreateBatchRequest {
+  batch_number?: string;
+  company_name: string;
+  referred_by: string;
+  number_of_participants: number;
+  batch_type: BatchType;
+  certificate_type: CertificateType;
+  start_date: string;
+  end_date: string;
+  instructor_id: number;
+  description?: string;
+}
+
+export interface UpdateBatchRequest {
+  company_name?: string;
+  referred_by?: string;
+  number_of_participants?: number;
+  batch_type?: BatchType;
+  certificate_type?: CertificateType;
+  start_date?: string;
+  end_date?: string;
+  instructor_id?: number;
+  description?: string;
 }

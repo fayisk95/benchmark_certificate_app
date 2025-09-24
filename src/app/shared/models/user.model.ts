@@ -1,11 +1,11 @@
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: UserRole;
-  created_at: Date;
-  updated_at: Date;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export enum UserRole {
@@ -13,6 +13,32 @@ export enum UserRole {
   SUPERVISOR = 'Supervisor',
   INSTRUCTOR = 'Instructor',
   STAFF = 'Staff'
+}
+
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  is_active?: boolean;
+}
+
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  is_active?: boolean;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  message: string;
+  token: string;
+  user: User;
 }
 
 export interface Permission {

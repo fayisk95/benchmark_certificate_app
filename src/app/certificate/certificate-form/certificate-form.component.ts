@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CertificateService } from '../../core/services/certificate.service';
 import { BatchService } from '../../core/services/batch.service';
-import { Certificate, CertificateStatus } from '../../core/models/certificate.model';
-import { Batch } from '../../core/models/batch.model';
+import { Certificate, CreateCertificateRequest, UpdateCertificateRequest } from '../../shared/models/certificate.model';
+import { Batch } from '../../shared/models/batch.model';
 
 @Component({
   standalone: false,
@@ -27,16 +27,16 @@ export class CertificateFormComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.certificateForm = this.fb.group({
-      batchId: ['', Validators.required],
+      batch_id: ['', Validators.required],
       name: ['', [Validators.required, Validators.minLength(2)]],
       nationality: ['', Validators.required],
-      eidLicense: ['', Validators.required],
+      eid_license: ['', Validators.required],
       employer: ['', Validators.required],
-      trainingName: ['', Validators.required],
-      trainingDate: ['', Validators.required],
-      issueDate: ['', Validators.required],
-      dueDate: ['', Validators.required],
-      certificateNumber: [''] // Optional for manual override
+      training_name: ['', Validators.required],
+      training_date: ['', Validators.required],
+      issue_date: ['', Validators.required],
+      due_date: ['', Validators.required],
+      certificate_number: [''] // Optional for manual override
     });
   }
 
@@ -66,16 +66,16 @@ export class CertificateFormComponent implements OnInit {
       this.certificateService.getCertificateByIdFromApi(this.certificateId).subscribe({
         next: (certificate) => {
           this.certificateForm.patchValue({
-            batchId: certificate.batchId,
+            batch_id: certificate.batch_id,
             name: certificate.name,
             nationality: certificate.nationality,
-            eidLicense: certificate.eidLicense,
+            eid_license: certificate.eid_license,
             employer: certificate.employer,
-            trainingName: certificate.trainingName,
-            trainingDate: certificate.trainingDate,
-            issueDate: certificate.issueDate,
-            dueDate: certificate.dueDate,
-            certificateNumber: certificate.certificateNumber
+            training_name: certificate.training_name,
+            training_date: certificate.training_date,
+            issue_date: certificate.issue_date,
+            due_date: certificate.due_date,
+            certificate_number: certificate.certificate_number
           });
         },
         error: (error) => {
@@ -92,19 +92,54 @@ export class CertificateFormComponent implements OnInit {
 
       const formData = this.certificateForm.value;
 
-      const saveOperation = this.isEdit && this.certificateId
-        ? this.certificateService.updateCertificate(this.certificateId, formData)
-        : this.certificateService.createCertificate(formData);
+      if (this.isEdit && this.certificateId) {
+        const updateRequest: UpdateCertificateRequest = {
+          name: formData.name,
+          nationality: formData.nationality,
+          eid_license: formData.eid_license,
+          employer: formData.employer,
+          training_name: formData.training_name,
+          training_date: formData.training_date,
+          issue_date: formData.issue_date,
+          due_date: formData.due_date
+        };
 
-      saveOperation.subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard/certificates']);
-        },
-        error: (error) => {
-          console.error('Error saving certificate:', error);
-          this.isLoading = false;
+        this.certificateService.updateCertificate(this.certificateId, updateRequest).subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard/certificates']);
+          },
+          error: (error) => {
+            console.error('Error updating certificate:', error);
+            this.isLoading = false;
+          }
+        });
+      } else {
+        const createRequest: CreateCertificateRequest = {
+          batch_id: formData.batch_id,
+          name: formData.name,
+          nationality: formData.nationality,
+          eid_license: formData.eid_license,
+          employer: formData.employer,
+          training_name: formData.training_name,
+          training_date: formData.training_date,
+          issue_date: formData.issue_date,
+          due_date: formData.due_date
+        };
+
+        if (formData.certificate_number) {
+          createRequest.certificate_number = formData.certificate_number;
         }
-      });
+
+        this.certificateService.createCertificate(createRequest).subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard/certificates']);
+          },
+          error: (error) => {
+            console.error('Error creating certificate:', error);
+            this.isLoading = false;
+          }
+        });
+      }
     }
   }
 

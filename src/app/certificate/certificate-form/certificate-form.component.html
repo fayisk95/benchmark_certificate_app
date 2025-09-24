@@ -9,12 +9,12 @@
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Batch</mat-label>
-            <mat-select formControlName="batchId" required>
+            <mat-select formControlName="batch_id" required>
               <mat-option *ngFor="let batch of batches" [value]="batch.id">
                 {{ batch.batch_number }} - {{ batch.company_name }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="certificateForm.get('batchId')?.hasError('required')">
+            <mat-error *ngIf="certificateForm.get('batch_id')?.hasError('required')">
               Batch selection is required
             </mat-error>
           </mat-form-field>
@@ -41,8 +41,8 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>EID/License Number</mat-label>
-            <input matInput formControlName="eidLicense" required>
-            <mat-error *ngIf="certificateForm.get('eidLicense')?.hasError('required')">
+            <input matInput formControlName="eid_license" required>
+            <mat-error *ngIf="certificateForm.get('eid_license')?.hasError('required')">
               EID/License number is required
             </mat-error>
           </mat-form-field>
@@ -59,8 +59,8 @@
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Training Name</mat-label>
-            <input matInput formControlName="trainingName" required>
-            <mat-error *ngIf="certificateForm.get('trainingName')?.hasError('required')">
+            <input matInput formControlName="training_name" required>
+            <mat-error *ngIf="certificateForm.get('training_name')?.hasError('required')">
               Training name is required
             </mat-error>
           </mat-form-field>
@@ -69,20 +69,20 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Training Date</mat-label>
-            <input matInput [matDatepicker]="trainingPicker" formControlName="trainingDate" required>
+            <input matInput [matDatepicker]="trainingPicker" formControlName="training_date" required>
             <mat-datepicker-toggle matIconSuffix [for]="trainingPicker"></mat-datepicker-toggle>
             <mat-datepicker #trainingPicker></mat-datepicker>
-            <mat-error *ngIf="certificateForm.get('trainingDate')?.hasError('required')">
+            <mat-error *ngIf="certificateForm.get('training_date')?.hasError('required')">
               Training date is required
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Issue Date</mat-label>
-            <input matInput [matDatepicker]="issuePicker" formControlName="issueDate" required>
+            <input matInput [matDatepicker]="issuePicker" formControlName="issue_date" required>
             <mat-datepicker-toggle matIconSuffix [for]="issuePicker"></mat-datepicker-toggle>
             <mat-datepicker #issuePicker></mat-datepicker>
-            <mat-error *ngIf="certificateForm.get('issueDate')?.hasError('required')">
+            <mat-error *ngIf="certificateForm.get('issue_date')?.hasError('required')">
               Issue date is required
             </mat-error>
           </mat-form-field>
@@ -91,17 +91,17 @@
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Due Date</mat-label>
-            <input matInput [matDatepicker]="duePicker" formControlName="dueDate" required>
+            <input matInput [matDatepicker]="duePicker" formControlName="due_date" required>
             <mat-datepicker-toggle matIconSuffix [for]="duePicker"></mat-datepicker-toggle>
             <mat-datepicker #duePicker></mat-datepicker>
-            <mat-error *ngIf="certificateForm.get('dueDate')?.hasError('required')">
+            <mat-error *ngIf="certificateForm.get('due_date')?.hasError('required')">
               Due date is required
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline">
             <mat-label>Certificate Number (Optional)</mat-label>
-            <input matInput formControlName="certificateNumber" placeholder="Auto-generated if empty">
+            <input matInput formControlName="certificate_number" placeholder="Auto-generated if empty">
             <mat-hint>Leave empty for auto-generation</mat-hint>
           </mat-form-field>
         </div>

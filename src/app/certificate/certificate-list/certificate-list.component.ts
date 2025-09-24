@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Certificate, CertificateStatus, AttachmentType } from '../../core/models/certificate.model';
+import { Certificate, CertificateStatus, AttachmentType } from '../../shared/models/certificate.model';
 import { CertificateService } from '../../core/services/certificate.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { CertificateService } from '../../core/services/certificate.service';
   styleUrls: ['./certificate-list.component.scss']
 })
 export class CertificateListComponent implements OnInit {
-  displayedColumns: string[] = ['certificateNumber', 'name', 'employer', 'trainingName', 'issueDate', 'dueDate', 'status', 'attachments', 'actions'];
+  displayedColumns: string[] = ['certificate_number', 'name', 'employer', 'training_name', 'issue_date', 'due_date', 'status', 'attachments', 'actions'];
 
   public AttachmentType = AttachmentType;
 
@@ -57,7 +57,7 @@ export class CertificateListComponent implements OnInit {
   applyAllFilters(searchValue: string = ''): void {
     this.filteredCertificates = this.certificates.filter(cert => {
       const matchesSearch = !searchValue ||
-        cert.certificateNumber.toLowerCase().includes(searchValue) ||
+        cert.certificate_number.toLowerCase().includes(searchValue) ||
         cert.name.toLowerCase().includes(searchValue) ||
         cert.employer.toLowerCase().includes(searchValue);
 
@@ -66,14 +66,16 @@ export class CertificateListComponent implements OnInit {
       return matchesSearch && matchesStatus;
     });
   }
+
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Active': return 'active';
-      case 'Expired': return 'expired';
-      case 'Expiring Soon': return 'expiring';
+      case CertificateStatus.ACTIVE: return 'active';
+      case CertificateStatus.EXPIRED: return 'expired';
+      case CertificateStatus.EXPIRING_SOON: return 'expiring';
       default: return 'active';
     }
   }
+
   createCertificate(): void {
     this.router.navigate(['/dashboard/certificates/create']);
   }
@@ -98,14 +100,15 @@ export class CertificateListComponent implements OnInit {
   }
 
   hasAttachment(certificate: Certificate, type: AttachmentType): boolean {
-    return certificate.attachments?.some(att => att.type === type) || false;
+    return certificate.attachments?.some(att => att.file_type === type) || false;
   }
 
   downloadAttachment(certificate: Certificate, type: AttachmentType): void {
-    const attachment = certificate.attachments?.find(att => att.type === type);
+    const attachment = certificate.attachments?.find(att => att.file_type === type);
     if (attachment) {
       // TODO: Implement attachment download
-      window.open(attachment.url, '_blank');
+      const url = `${window.location.origin}/${attachment.file_path}`;
+      window.open(url, '_blank');
     }
   }
 }

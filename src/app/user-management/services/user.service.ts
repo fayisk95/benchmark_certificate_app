@@ -1,9 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { CreateUserRequest, UpdateUserRequest } from '../../core/models/user.model';
-import { ApiService, ApiResponse } from '../../core/services/api.service';
-import { User } from '../../shared/models/user.model';
+import { User, CreateUserRequest, UpdateUserRequest } from '../../shared/models/user.model';
+import { ApiService } from '../../core/services/api.service';
 
 interface UsersResponse {
   users: User[];
@@ -20,6 +19,10 @@ interface UserResponse {
   message?: string;
 }
 
+interface InstructorsResponse {
+  instructors: User[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,9 +30,7 @@ export class UserService {
   private _users = signal<User[]>([]);
   users = this._users.asReadonly();
 
-  constructor(private apiService: ApiService) {
-    this.loadUsers();
-  }
+  constructor(private apiService: ApiService) {}
 
   loadUsers(params?: any): Observable<UsersResponse> {
     return this.apiService.get<UsersResponse>('/users', params).pipe(
@@ -48,7 +49,7 @@ export class UserService {
     );
   }
 
-  getUserById(id: string): User | undefined {
+  getUserById(id: number): User | undefined {
     return this.users().find(user => user.id === id);
   }
 
@@ -64,7 +65,7 @@ export class UserService {
       tap(updatedUser => {
         this._users.update(users =>
           users.map(user =>
-            user.id === id ? updatedUser : user
+            user.id.toString() === id ? updatedUser : user
           )
         );
       })
@@ -74,18 +75,18 @@ export class UserService {
   deleteUser(id: string): Observable<any> {
     return this.apiService.delete(`/users/${id}`).pipe(
       tap(() => {
-        this._users.update(users => users.filter(user => user.id !== id));
+        this._users.update(users => users.filter(user => user.id.toString() !== id));
       })
     );
   }
 
-  toggleUserStatus(id: string): Observable<any> {
+  toggleUserStatus(id: number): Observable<any> {
     return this.apiService.patch(`/users/${id}/toggle-status`, {}).pipe(
-      tap(() => {
+      tap((response: any) => {
         this._users.update(users =>
           users.map(user =>
             user.id === id
-              ? { ...user, isActive: !user.is_active }
+              ? { ...user, is_active: response.is_active }
               : user
           )
         );
@@ -94,7 +95,7 @@ export class UserService {
   }
 
   getInstructors(): Observable<User[]> {
-    return this.apiService.get<{ instructors: User[] }>('/users/instructors/list').pipe(
+    return this.apiService.get<InstructorsResponse>('/users/instructors/list').pipe(
       map(response => response.instructors)
     );
   }

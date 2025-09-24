@@ -34,10 +34,10 @@
       <div class="table-container">
         <table mat-table [dataSource]="filteredCertificates" class="certificate-table">
 
-          <ng-container matColumnDef="certificateNumber">
+          <ng-container matColumnDef="certificate_number">
             <th mat-header-cell *matHeaderCellDef>Certificate Number</th>
             <td mat-cell *matCellDef="let certificate">
-              <strong class="cert-number">{{ certificate.certificateNumber }}</strong>
+              <strong class="cert-number">{{ certificate.certificate_number }}</strong>
             </td>
           </ng-container>
 
@@ -56,19 +56,19 @@
             <td mat-cell *matCellDef="let certificate">{{ certificate.employer }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="trainingName">
+          <ng-container matColumnDef="training_name">
             <th mat-header-cell *matHeaderCellDef>Training</th>
-            <td mat-cell *matCellDef="let certificate">{{ certificate.trainingName }}</td>
+            <td mat-cell *matCellDef="let certificate">{{ certificate.training_name }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="issueDate">
+          <ng-container matColumnDef="issue_date">
             <th mat-header-cell *matHeaderCellDef>Issue Date</th>
-            <td mat-cell *matCellDef="let certificate">{{ certificate.issueDate | date:'mediumDate' }}</td>
+            <td mat-cell *matCellDef="let certificate">{{ certificate.issue_date | date:'mediumDate' }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="dueDate">
+          <ng-container matColumnDef="due_date">
             <th mat-header-cell *matHeaderCellDef>Due Date</th>
-            <td mat-cell *matCellDef="let certificate">{{ certificate.dueDate | date:'mediumDate' }}</td>
+            <td mat-cell *matCellDef="let certificate">{{ certificate.due_date | date:'mediumDate' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="status">
@@ -88,14 +88,14 @@
                   title="EID Available" (click)="downloadAttachment(certificate, AttachmentType.EID)">
                   credit_card
                 </mat-icon>
-                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.DrivingLicense)"
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.DRIVING_LICENSE)"
                   class="attachment-icon license-icon" title="License Available"
-                  (click)="downloadAttachment(certificate, AttachmentType.DrivingLicense)">
+                  (click)="downloadAttachment(certificate, AttachmentType.DRIVING_LICENSE)">
                   drive_eta
                 </mat-icon>
-                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.SignedCertificate)"
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)"
                   class="attachment-icon signed-icon" title="Signed Certificate"
-                  (click)="downloadAttachment(certificate, AttachmentType.SignedCertificate)">
+                  (click)="downloadAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)">
                   fact_check
                 </mat-icon>
               </div>

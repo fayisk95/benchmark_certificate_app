@@ -82,7 +82,6 @@ router.get('/', authenticateToken, requirePermission('manage-batches'), async (r
        LIMIT ${limit} OFFSET ${offset}`,
       [...queryParams]
     );
-    console.log(rows);
     // Parse JSON fields
     const batches = rows.map(batch => ({
       ...batch,
@@ -124,7 +123,7 @@ router.get('/:id', authenticateToken, requirePermission('manage-batches'), async
 
     const batch = {
       ...rows[0],
-      reserved_cert_numbers: rows[0].reserved_cert_numbers ? JSON.parse(rows[0].reserved_cert_numbers) : []
+      reserved_cert_numbers: rows[0].reserved_cert_numbers || []
     };
 
     res.json({ batch });
@@ -201,10 +200,9 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
        WHERE b.id = ?`,
       [result.insertId]
     );
-
     const batch = {
       ...rows[0],
-      reserved_cert_numbers: JSON.parse(rows[0].reserved_cert_numbers)
+      reserved_cert_numbers: rows[0].reserved_cert_numbers || []
     };
 
     res.status(201).json({
@@ -301,7 +299,7 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
 
     const updatedBatch = {
       ...rows[0],
-      reserved_cert_numbers: JSON.parse(rows[0].reserved_cert_numbers)
+      reserved_cert_numbers: rows[0].reserved_cert_numbers || []
     };
 
     res.json({

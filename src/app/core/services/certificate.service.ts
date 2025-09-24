@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { Certificate, CreateCertificateRequest, CertificateStatus } from '../models/certificate.model';
+import { Certificate, CreateCertificateRequest, UpdateCertificateRequest, CertificateStatus } from '../../shared/models/certificate.model';
 import { ApiService } from './api.service';
 
 interface CertificatesResponse {
@@ -33,9 +33,7 @@ export class CertificateService {
   private _certificates = signal<Certificate[]>([]);
   certificates = this._certificates.asReadonly();
 
-  constructor(private apiService: ApiService) {
-    this.loadCertificates();
-  }
+  constructor(private apiService: ApiService) {}
 
   loadCertificates(params?: any): Observable<CertificatesResponse> {
     return this.apiService.get<CertificatesResponse>('/certificates', params).pipe(
@@ -54,7 +52,7 @@ export class CertificateService {
     );
   }
 
-  getCertificateById(id: string): Certificate | undefined {
+  getCertificateById(id: number): Certificate | undefined {
     return this.certificates().find(cert => cert.id === id);
   }
 
@@ -68,13 +66,13 @@ export class CertificateService {
     return this.certificates().filter(cert => cert.status === status);
   }
 
-  updateCertificate(id: string, updates: Partial<Certificate>): Observable<Certificate> {
+  updateCertificate(id: string, updates: UpdateCertificateRequest): Observable<Certificate> {
     return this.apiService.put<CertificateResponse>(`/certificates/${id}`, updates).pipe(
       map(response => response.certificate),
       tap(updatedCertificate => {
         this._certificates.update(certs =>
           certs.map(cert =>
-            cert.id === id ? updatedCertificate : cert
+            cert.id.toString() === id ? updatedCertificate : cert
           )
         );
       })
@@ -84,7 +82,7 @@ export class CertificateService {
   deleteCertificate(id: string): Observable<any> {
     return this.apiService.delete(`/certificates/${id}`).pipe(
       tap(() => {
-        this._certificates.update(certs => certs.filter(cert => cert.id !== id));
+        this._certificates.update(certs => certs.filter(cert => cert.id.toString() !== id));
       })
     );
   }
@@ -113,9 +111,9 @@ export class CertificateService {
     const certs = this.certificates();
     return {
       total: certs.length,
-      active: certs.filter(c => c.status === 'Active').length,
-      expired: certs.filter(c => c.status === 'Expired').length,
-      expiringSoon: certs.filter(c => c.status === 'Expiring Soon').length
+      active: certs.filter(c => c.status === CertificateStatus.ACTIVE).length,
+      expired: certs.filter(c => c.status === CertificateStatus.EXPIRED).length,
+      expiringSoon: certs.filter(c => c.status === CertificateStatus.EXPIRING_SOON).length
     };
   }
 }

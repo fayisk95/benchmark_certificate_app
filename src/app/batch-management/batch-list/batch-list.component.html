@@ -36,54 +36,54 @@
       <div class="table-container">
         <table mat-table [dataSource]="filteredBatches" class="batch-table">
           
-          <ng-container matColumnDef="batchNumber">
+          <ng-container matColumnDef="batch_number">
             <th mat-header-cell *matHeaderCellDef>Batch Number</th>
             <td mat-cell *matCellDef="let batch">
-              <strong class="batch-number">{{ batch.batchNumber }}</strong>
+              <strong class="batch-number">{{ batch.batch_number }}</strong>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="companyName">
+          <ng-container matColumnDef="company_name">
             <th mat-header-cell *matHeaderCellDef>Company</th>
             <td mat-cell *matCellDef="let batch">
               <div class="company-info">
-                <div class="company-name">{{ batch.companyName }}</div>
-                <div class="referred-by">Ref: {{ batch.referredBy }}</div>
+                <div class="company-name">{{ batch.company_name }}</div>
+                <div class="referred-by">Ref: {{ batch.referred_by }}</div>
               </div>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="participants">
+          <ng-container matColumnDef="number_of_participants">
             <th mat-header-cell *matHeaderCellDef>Participants</th>
-            <td mat-cell *matCellDef="let batch">{{ batch.numberOfParticipants }}</td>
+            <td mat-cell *matCellDef="let batch">{{ batch.number_of_participants }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="type">
+          <ng-container matColumnDef="batch_type">
             <th mat-header-cell *matHeaderCellDef>Type</th>
             <td mat-cell *matCellDef="let batch">
-              <mat-chip [class]="'type-chip type-' + batch.batchType.toLowerCase()">
-                {{ batch.batchType }}
+              <mat-chip [class]="'type-chip type-' + batch.batch_type.toLowerCase()">
+                {{ batch.batch_type }}
               </mat-chip>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="certificateType">
+          <ng-container matColumnDef="certificate_type">
             <th mat-header-cell *matHeaderCellDef>Certificate</th>
             <td mat-cell *matCellDef="let batch">
-              <mat-chip [class]="'cert-chip cert-' + getCertificateClass(batch.certificateType)">
-                {{ batch.certificateType }}
+              <mat-chip [class]="'cert-chip cert-' + getCertificateClass(batch.certificate_type)">
+                {{ batch.certificate_type }}
               </mat-chip>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="startDate">
+          <ng-container matColumnDef="start_date">
             <th mat-header-cell *matHeaderCellDef>Start Date</th>
-            <td mat-cell *matCellDef="let batch">{{ batch.startDate | date:'short' }}</td>
+            <td mat-cell *matCellDef="let batch">{{ batch.start_date | date:'short' }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="instructorName">
+          <ng-container matColumnDef="instructor_name">
             <th mat-header-cell *matHeaderCellDef>Instructor</th>
-            <td mat-cell *matCellDef="let batch">{{ batch.instructorName }}</td>
+            <td mat-cell *matCellDef="let batch">{{ batch.instructor_name || 'Not assigned' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">

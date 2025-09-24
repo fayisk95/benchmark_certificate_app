@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { Batch, CreateBatchRequest } from '../models/batch.model';
+import { Batch, CreateBatchRequest, UpdateBatchRequest } from '../../shared/models/batch.model';
 import { ApiService } from './api.service';
 
 interface BatchesResponse {
@@ -33,9 +33,7 @@ export class BatchService {
   private _batches = signal<Batch[]>([]);
   batches = this._batches.asReadonly();
 
-  constructor(private apiService: ApiService) {
-    this.loadBatches();
-  }
+  constructor(private apiService: ApiService) {}
 
   loadBatches(params?: any): Observable<BatchesResponse> {
     return this.apiService.get<BatchesResponse>('/batches', params).pipe(
@@ -54,7 +52,7 @@ export class BatchService {
     );
   }
 
-  getBatchById(id: string): Batch | undefined {
+  getBatchById(id: number): Batch | undefined {
     return this.batches().find(batch => batch.id === id);
   }
 
@@ -64,13 +62,13 @@ export class BatchService {
     );
   }
 
-  updateBatch(id: string, updates: Partial<Batch>): Observable<Batch> {
+  updateBatch(id: string, updates: UpdateBatchRequest): Observable<Batch> {
     return this.apiService.put<BatchResponse>(`/batches/${id}`, updates).pipe(
       map(response => response.batch),
       tap(updatedBatch => {
         this._batches.update(batches =>
           batches.map(batch =>
-            batch.id === id ? updatedBatch : batch
+            batch.id.toString() === id ? updatedBatch : batch
           )
         );
       })
@@ -80,7 +78,7 @@ export class BatchService {
   deleteBatch(id: string): Observable<any> {
     return this.apiService.delete(`/batches/${id}`).pipe(
       tap(() => {
-        this._batches.update(batches => batches.filter(batch => batch.id !== id));
+        this._batches.update(batches => batches.filter(batch => batch.id.toString() !== id));
       })
     );
   }

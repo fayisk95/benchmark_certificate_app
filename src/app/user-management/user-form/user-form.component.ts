@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserRole } from '../../shared/models/user.model';
+import { UserRole, CreateUserRequest, UpdateUserRequest } from '../../shared/models/user.model';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class UserFormComponent implements OnInit {
       role: [UserRole.STAFF, Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      isActive: [true]
+      is_active: [true]
     });
   }
 
@@ -41,6 +41,8 @@ export class UserFormComponent implements OnInit {
       this.loadUser();
       this.userForm.get('password')?.clearValidators();
       this.userForm.get('confirmPassword')?.clearValidators();
+      this.userForm.get('password')?.updateValueAndValidity();
+      this.userForm.get('confirmPassword')?.updateValueAndValidity();
     }
   }
 
@@ -52,7 +54,7 @@ export class UserFormComponent implements OnInit {
             name: user.name,
             email: user.email,
             role: user.role,
-            isActive: user.is_active
+            is_active: user.is_active
           });
         },
         error: (error) => {
@@ -71,30 +73,52 @@ export class UserFormComponent implements OnInit {
       if (!this.isEdit) {
         // Validate password confirmation
         if (formData.password !== formData.confirmPassword) {
+          this.userForm.get('confirmPassword')?.setErrors({ mismatch: true });
+          this.loading = false;
           return;
         }
-      }
 
-      const saveOperation = this.isEdit && this.userId
-        ? this.userService.updateUser(this.userId, formData)
-        : this.userService.createUser(formData);
+        const createRequest: CreateUserRequest = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+          is_active: formData.is_active
+        };
 
-      saveOperation.subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard/users']);
-        },
-        error: (error) => {
-          console.error('Error saving user:', error);
-          this.loading = false;
-          // Handle specific error cases
-          if (error.message && error.message.includes('Email already exists')) {
-            this.userForm.get('email')?.setErrors({ emailExists: true });
+        this.userService.createUser(createRequest).subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard/users']);
+          },
+          error: (error) => {
+            console.error('Error creating user:', error);
+            this.loading = false;
+            if (error.message && error.message.includes('Email already exists')) {
+              this.userForm.get('email')?.setErrors({ emailExists: true });
+            }
           }
-        },
-        complete: () => {
-          this.loading = false;
-        }
-      });
+        });
+      } else if (this.userId) {
+        const updateRequest: UpdateUserRequest = {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          is_active: formData.is_active
+        };
+
+        this.userService.updateUser(this.userId, updateRequest).subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard/users']);
+          },
+          error: (error) => {
+            console.error('Error updating user:', error);
+            this.loading = false;
+            if (error.message && error.message.includes('Email already exists')) {
+              this.userForm.get('email')?.setErrors({ emailExists: true });
+            }
+          }
+        });
+      }
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.userForm.controls).forEach(key => {
