@@ -42,8 +42,8 @@ router.get('/', authenticateToken, requirePermission('manage-users'), async (req
       `SELECT id, name, email, role, is_active, created_at, updated_at 
        FROM users ${whereClause} 
        ORDER BY created_at DESC 
-       LIMIT ? OFFSET ?`,
-      [...queryParams, parseInt(limit), parseInt(offset)]
+       LIMIT ${limit} OFFSET ${offset}`,
+      [...queryParams]
     );
 
     res.json({
@@ -219,8 +219,8 @@ router.delete('/:id', authenticateToken, requirePermission('manage-users'), asyn
     );
 
     if (batches[0].count > 0) {
-      return res.status(400).json({ 
-        error: 'Cannot delete user with associated batches. Please reassign batches first.' 
+      return res.status(400).json({
+        error: 'Cannot delete user with associated batches. Please reassign batches first.'
       });
     }
 

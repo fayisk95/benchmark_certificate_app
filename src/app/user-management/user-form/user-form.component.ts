@@ -52,7 +52,7 @@ export class UserFormComponent implements OnInit {
             name: user.name,
             email: user.email,
             role: user.role,
-            isActive: user.isActive
+            isActive: user.is_active
           });
         },
         error: (error) => {

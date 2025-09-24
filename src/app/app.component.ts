@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
 import { filter } from 'rxjs/operators';
+import { AuthService } from './shared/services/auth.service';
 
 @Component({
   standalone: false,
@@ -45,10 +45,10 @@ export class AppComponent {
   private authService = inject(AuthService);
 
   isLoginPage = false;
-  currentUser = this.authService.currentUser;
+  currentUser = this.authService.getCurrentUser();
 
   get isAdmin(): boolean {
-    return this.currentUser()?.role === 'Admin';
+    return this.currentUser?.role === 'Admin';
   }
 
   constructor() {

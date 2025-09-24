@@ -1,16 +1,16 @@
 export interface User {
   id: string;
-  email: string;
   name: string;
+  email: string;
   role: UserRole;
-  isActive: boolean;
-  createdAt: Date;
-  lastLogin?: Date;
+  created_at: Date;
+  updated_at: Date;
+  is_active: boolean;
 }
 
 export enum UserRole {
   ADMIN = 'Admin',
-  SUPERVISOR = 'Supervisor', 
+  SUPERVISOR = 'Supervisor',
   INSTRUCTOR = 'Instructor',
   STAFF = 'Staff'
 }

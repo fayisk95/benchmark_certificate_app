@@ -17,7 +17,11 @@ export interface Certificate {
   updatedAt: Date;
 }
 
-export type CertificateStatus = 'Active' | 'Expired' | 'Expiring Soon';
+export enum CertificateStatus {
+  Active = 'Active',
+  Expired = 'Expired',
+  ExpiringSoon = 'Expiring Soon'
+}
 
 export interface CertificateAttachment {
   id: string;
@@ -28,7 +32,11 @@ export interface CertificateAttachment {
   url: string;
 }
 
-export type AttachmentType = 'EID' | 'Driving License' | 'Signed Certificate';
+export enum AttachmentType {
+  EID = 'EID',
+  DrivingLicense = 'Driving License',
+  SignedCertificate = 'Signed Certificate'
+}
 
 export interface CreateCertificateRequest {
   batchId: string;

@@ -3,8 +3,9 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
-import { User, UserRole } from '../models/user.model';
 import { ApiService } from '../../core/services/api.service';
+import { UserRole } from '../../core/models/user.model';
+import { User } from '../models/user.model';
 
 interface LoginRequest {
   email: string;
@@ -27,7 +28,6 @@ interface ProfileResponse {
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-
   constructor(
     private apiService: ApiService,
     private router: Router
@@ -49,9 +49,9 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string): Observable<User | null> {
+  login(email: string, password: string): Observable<any> {
     const loginData: LoginRequest = { email, password };
-    
+
     return this.apiService.post<LoginResponse>('/auth/login', loginData).pipe(
       tap(response => {
         localStorage.setItem('authToken', response.token);

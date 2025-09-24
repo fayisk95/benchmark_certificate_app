@@ -1,8 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { User, CreateUserRequest, UpdateUserRequest } from '../../core/models/user.model';
+import { CreateUserRequest, UpdateUserRequest } from '../../core/models/user.model';
 import { ApiService, ApiResponse } from '../../core/services/api.service';
+import { User } from '../../shared/models/user.model';
 
 interface UsersResponse {
   users: User[];
@@ -84,7 +85,7 @@ export class UserService {
         this._users.update(users =>
           users.map(user =>
             user.id === id
-              ? { ...user, isActive: !user.isActive }
+              ? { ...user, isActive: !user.is_active }
               : user
           )
         );

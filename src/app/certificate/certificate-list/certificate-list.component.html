@@ -33,7 +33,7 @@
 
       <div class="table-container">
         <table mat-table [dataSource]="filteredCertificates" class="certificate-table">
-          
+
           <ng-container matColumnDef="certificateNumber">
             <th mat-header-cell *matHeaderCellDef>Certificate Number</th>
             <td mat-cell *matCellDef="let certificate">
@@ -84,25 +84,18 @@
             <th mat-header-cell *matHeaderCellDef>Attachments</th>
             <td mat-cell *matCellDef="let certificate">
               <div class="attachment-icons">
-                <mat-icon 
-                  *ngIf="hasAttachment(certificate, AttachmentType.EID)"
-                  class="attachment-icon eid-icon"
-                  title="EID Available"
-                  (click)="downloadAttachment(certificate, AttachmentType.EID)">
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.EID)" class="attachment-icon eid-icon"
+                  title="EID Available" (click)="downloadAttachment(certificate, AttachmentType.EID)">
                   credit_card
                 </mat-icon>
-                <mat-icon 
-                  *ngIf="hasAttachment(certificate, AttachmentType.DRIVING_LICENSE)"
-                  class="attachment-icon license-icon"
-                  title="License Available"
-                  (click)="downloadAttachment(certificate, AttachmentType.DRIVING_LICENSE)">
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.DrivingLicense)"
+                  class="attachment-icon license-icon" title="License Available"
+                  (click)="downloadAttachment(certificate, AttachmentType.DrivingLicense)">
                   drive_eta
                 </mat-icon>
-                <mat-icon 
-                  *ngIf="hasAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)"
-                  class="attachment-icon signed-icon"
-                  title="Signed Certificate"
-                  (click)="downloadAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)">
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.SignedCertificate)"
+                  class="attachment-icon signed-icon" title="Signed Certificate"
+                  (click)="downloadAttachment(certificate, AttachmentType.SignedCertificate)">
                   fact_check
                 </mat-icon>
               </div>

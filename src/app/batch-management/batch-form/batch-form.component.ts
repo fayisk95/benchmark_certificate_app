@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BatchService } from '../../core/services/batch.service';
 import { UserService } from '../../user-management/services/user.service';
-import { AuthService } from '../../core/services/auth.service';
 import { Batch, BatchType, CertificateType } from '../../core/models/batch.model';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   standalone: false,
@@ -19,8 +19,8 @@ export class BatchFormComponent implements OnInit {
   isLoading = false;
   canManualOverride = false;
 
-  batchTypes: BatchType[] = ['Onsite', 'Hybrid', 'Online'];
-  certificateTypes: CertificateType[] = ['Fire & Safety', 'Water Safety'];
+  batchTypes: BatchType[] = [BatchType.Onsite, BatchType.Hybrid, BatchType.Online];
+  certificateTypes: CertificateType[] = [CertificateType.FireSafety, CertificateType.WaterSafety];
   instructors: any[] = [];
 
   constructor(
@@ -45,7 +45,7 @@ export class BatchFormComponent implements OnInit {
     });
 
     // Check if user can manually override batch numbers
-    const currentUser = this.authService.currentUser();
+    const currentUser = this.authService.getCurrentUser();
     this.canManualOverride = currentUser?.role === 'Admin' || currentUser?.role === 'Supervisor';
   }
 
@@ -80,16 +80,16 @@ export class BatchFormComponent implements OnInit {
       this.batchService.getBatchByIdFromApi(this.batchId).subscribe({
         next: (batch) => {
           this.batchForm.patchValue({
-            companyName: batch.companyName,
-            referredBy: batch.referredBy,
-            numberOfParticipants: batch.numberOfParticipants,
-            batchType: batch.batchType,
-            certificateType: batch.certificateType,
-            startDate: batch.startDate,
-            endDate: batch.endDate,
-            instructorId: batch.instructorId,
+            companyName: batch.company_name,
+            referredBy: batch.referred_by,
+            numberOfParticipants: batch.number_of_participants,
+            batchType: batch.batch_type,
+            certificateType: batch.certificate_type,
+            startDate: batch.start_date,
+            endDate: batch.end_date,
+            instructorId: batch.instructor_id,
             description: batch.description,
-            batchNumber: batch.batchNumber
+            batchNumber: batch.batch_number
           });
         },
         error: (error) => {

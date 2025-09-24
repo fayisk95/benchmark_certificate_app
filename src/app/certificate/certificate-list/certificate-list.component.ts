@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Certificate, CertificateStatus, AttachmentType } from '../../shared/models/certificate.model';
+import { Certificate, CertificateStatus, AttachmentType } from '../../core/models/certificate.model';
 import { CertificateService } from '../../core/services/certificate.service';
 
 @Component({
@@ -98,14 +98,14 @@ export class CertificateListComponent implements OnInit {
   }
 
   hasAttachment(certificate: Certificate, type: AttachmentType): boolean {
-    return certificate.attachments?.some(att => att.fileType === type) || false;
+    return certificate.attachments?.some(att => att.type === type) || false;
   }
 
   downloadAttachment(certificate: Certificate, type: AttachmentType): void {
-    const attachment = certificate.attachments?.find(att => att.fileType === type);
+    const attachment = certificate.attachments?.find(att => att.type === type);
     if (attachment) {
       // TODO: Implement attachment download
-      window.open(attachment.fileUrl, '_blank');
+      window.open(attachment.url, '_blank');
     }
   }
 }

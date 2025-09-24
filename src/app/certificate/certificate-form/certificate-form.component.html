@@ -11,7 +11,7 @@
             <mat-label>Batch</mat-label>
             <mat-select formControlName="batchId" required>
               <mat-option *ngFor="let batch of batches" [value]="batch.id">
-                {{ batch.batchNumber }} - {{ batch.companyName }}
+                {{ batch.batch_number }} - {{ batch.company_name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="certificateForm.get('batchId')?.hasError('required')">

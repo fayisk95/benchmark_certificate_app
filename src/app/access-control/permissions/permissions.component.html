@@ -28,7 +28,7 @@
 
       <div class="current-permissions">
         <h3>Current Permission Summary</h3>
-        <div class="role-summary" *ngFor="let rolePermission of rolePermissions">
+        <div class="role-summary" *ngFor="let rolePermission of rolePermissionsArray">
           <h4 class="role-name">{{ rolePermission.role }}</h4>
           <mat-chip-set class="permission-chips">
             <mat-chip *ngFor="let permissionId of rolePermission.permissions" class="permission-chip">

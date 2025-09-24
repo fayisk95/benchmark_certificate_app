@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User, UserRole } from '../../shared/models/user.model';
 import { UserService } from '../services/user.service';
+import { User } from '../../shared/models/user.model';
 
 @Component({
   standalone: false,
@@ -59,7 +59,7 @@ export class UserListComponent implements OnInit {
   toggleUserStatus(user: User): void {
     this.userService.toggleUserStatus(user.id).subscribe({
       next: () => {
-        user.isActive = !user.isActive;
+        user.is_active = !user.is_active;
       },
       error: (error) => {
         console.error('Error toggling user status:', error);

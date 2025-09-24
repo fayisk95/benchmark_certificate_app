@@ -8,7 +8,7 @@ const router = express.Router();
 // Generate batch number
 const generateBatchNumber = async () => {
   const year = new Date().getFullYear();
-  
+
   // Get the last batch number for this year
   const [rows] = await db.execute(
     'SELECT batch_number FROM batches WHERE batch_number LIKE ? ORDER BY batch_number DESC LIMIT 1',
@@ -29,12 +29,12 @@ const generateCertificateNumbers = (count, certificateType) => {
   const year = new Date().getFullYear();
   const prefix = certificateType === 'Fire & Safety' ? 'FS' : 'WS';
   const startNumber = Math.floor(Math.random() * 1000) + 1;
-  
+
   const numbers = [];
   for (let i = 0; i < count; i++) {
     numbers.push(`${prefix}-${year}-${String(startNumber + i).padStart(4, '0')}`);
   }
-  
+
   return numbers;
 };
 
@@ -79,14 +79,14 @@ router.get('/', authenticateToken, requirePermission('manage-batches'), async (r
        LEFT JOIN users u ON b.instructor_id = u.id 
        ${whereClause}
        ORDER BY b.created_at DESC 
-       LIMIT ? OFFSET ?`,
-      [...queryParams, parseInt(limit), parseInt(offset)]
+       LIMIT ${limit} OFFSET ${offset}`,
+      [...queryParams]
     );
-
+    console.log(rows);
     // Parse JSON fields
     const batches = rows.map(batch => ({
       ...batch,
-      reserved_cert_numbers: batch.reserved_cert_numbers ? JSON.parse(batch.reserved_cert_numbers) : []
+      reserved_cert_numbers: batch.reserved_cert_numbers ? batch.reserved_cert_numbers : []
     }));
 
     res.json({
@@ -249,11 +249,11 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
     // Check if we need to regenerate certificate numbers
     const batch = existingBatch[0];
     let shouldRegenerateCerts = false;
-    
+
     if (updateData.number_of_participants && updateData.number_of_participants !== batch.number_of_participants) {
       shouldRegenerateCerts = true;
     }
-    
+
     if (updateData.certificate_type && updateData.certificate_type !== batch.certificate_type) {
       shouldRegenerateCerts = true;
     }
@@ -274,7 +274,7 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
       const newParticipants = updateData.number_of_participants || batch.number_of_participants;
       const newCertType = updateData.certificate_type || batch.certificate_type;
       const newCertNumbers = generateCertificateNumbers(newParticipants, newCertType);
-      
+
       updateFields.push('reserved_cert_numbers = ?');
       updateValues.push(JSON.stringify(newCertNumbers));
     }
@@ -337,8 +337,8 @@ router.delete('/:id', authenticateToken, requirePermission('manage-batches'), as
     );
 
     if (certificates[0].count > 0) {
-      return res.status(400).json({ 
-        error: 'Cannot delete batch with associated certificates. Please delete certificates first.' 
+      return res.status(400).json({
+        error: 'Cannot delete batch with associated certificates. Please delete certificates first.'
       });
     }
 

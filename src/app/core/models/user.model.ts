@@ -1,14 +1,11 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
-}
 
-export type UserRole = 'Admin' | 'Supervisor' | 'Instructor' | 'Staff';
+
+export enum UserRole {
+  ADMIN = 'Admin',
+  SUPERVISOR = 'Supervisor',
+  INSTRUCTOR = 'Instructor',
+  STAFF = 'Staff'
+}
 
 export interface CreateUserRequest {
   name: string;

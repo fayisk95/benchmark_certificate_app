@@ -1,6 +1,5 @@
 .permissions-container {
   padding: 24px;
-  max-width: 1200px;
   margin: 0 auto;
   font-family: 'Inter', sans-serif;
 }
@@ -11,12 +10,12 @@
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
   overflow: hidden;
-  
+
   .mat-mdc-card-header {
     padding: 32px 32px 0 32px;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 32px;
-    
+
     .mat-mdc-card-title {
       color: var(--primary-color);
       font-size: 28px;
@@ -24,7 +23,7 @@
       font-family: 'Inter', sans-serif;
       margin: 0 0 8px 0;
     }
-    
+
     .mat-mdc-card-subtitle {
       color: var(--text-light);
       font-size: 15px;
@@ -33,14 +32,14 @@
       margin: 0;
     }
   }
-  
+
   .mat-mdc-card-content {
     padding: 0 32px 32px 32px;
   }
-  
+
   .permissions-grid {
     margin-bottom: 40px;
-    
+
     .permissions-header {
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
@@ -51,14 +50,14 @@
       background: var(--light-gray);
       border-radius: var(--border-radius);
       padding: 20px;
-      
+
       .permission-label {
         font-weight: 600;
         color: var(--primary-color);
         font-size: 16px;
         font-family: 'Inter', sans-serif;
       }
-      
+
       .role-header {
         text-align: center;
         font-weight: 600;
@@ -67,7 +66,7 @@
         font-family: 'Inter', sans-serif;
       }
     }
-    
+
     .permission-row {
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
@@ -77,12 +76,12 @@
       align-items: center;
       border-radius: var(--border-radius);
       transition: all 0.2s ease;
-      
+
       &:hover {
         background-color: var(--light-gray);
         box-shadow: var(--shadow-sm);
       }
-      
+
       .permission-info {
         .permission-name {
           font-weight: 600;
@@ -91,7 +90,7 @@
           font-family: 'Inter', sans-serif;
           font-size: 15px;
         }
-        
+
         .permission-description {
           font-size: 13px;
           color: var(--text-light);
@@ -99,11 +98,11 @@
           font-family: 'Inter', sans-serif;
         }
       }
-      
+
       .role-checkbox {
         display: flex;
         justify-content: center;
-        
+
         .mat-mdc-checkbox {
           --mdc-checkbox-selected-checkmark-color: white;
           --mdc-checkbox-selected-focus-state-layer-color: var(--accent-color);
@@ -113,7 +112,7 @@
       }
     }
   }
-  
+
   .current-permissions {
     h3 {
       color: var(--primary-color);
@@ -122,14 +121,14 @@
       font-size: 22px;
       font-weight: 600;
     }
-    
+
     .role-summary {
       margin-bottom: 24px;
       padding: 20px;
       background: var(--light-gray);
       border-radius: var(--border-radius);
       border: 1px solid var(--border-color);
-      
+
       .role-name {
         color: var(--primary-color);
         margin-bottom: 12px;
@@ -137,7 +136,7 @@
         font-family: 'Inter', sans-serif;
         font-weight: 600;
       }
-      
+
       .permission-chips {
         .permission-chip {
           margin-right: 8px;
@@ -151,7 +150,7 @@
           height: 32px;
           border-radius: 16px;
           transition: all 0.2s ease;
-          
+
           &:hover {
             background-color: var(--accent-color) !important;
             color: white !important;
@@ -160,7 +159,7 @@
       }
     }
   }
-  
+
   .mat-mdc-card-actions {
     display: flex;
     justify-content: space-between;
@@ -169,18 +168,18 @@
     border-top: 1px solid var(--border-color);
     background: var(--light-gray);
     margin: 0;
-    
+
     .reset-button {
       color: var(--text-light);
       font-family: 'Inter', sans-serif;
       font-weight: 500;
-      
+
       &:hover {
         background-color: var(--background-color);
         color: var(--primary-color);
       }
     }
-    
+
     .mat-mdc-raised-button {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
@@ -194,46 +193,47 @@
   .permissions-container {
     padding: 16px;
   }
-  
+
   .permissions-card {
     .mat-mdc-card-header {
       padding: 24px 24px 0 24px;
-      
+
       .mat-mdc-card-title {
         font-size: 24px;
       }
     }
-    
+
     .mat-mdc-card-content {
       padding: 0 24px 24px 24px;
     }
-    
+
     .mat-mdc-card-actions {
       padding: 20px 24px;
     }
   }
-  
+
   .permissions-grid {
+
     .permissions-header,
     .permission-row {
       grid-template-columns: 1fr;
       text-align: left;
       gap: 12px;
     }
-    
+
     .permissions-header {
       .role-header {
         display: none;
       }
     }
-    
+
     .permission-row {
       .role-checkbox {
         justify-content: flex-start;
         margin-left: 0;
         padding: 8px 0;
         border-top: 1px solid var(--border-color);
-        
+
         &::before {
           content: attr(data-role);
           margin-right: 12px;
@@ -246,11 +246,11 @@
       }
     }
   }
-  
+
   .mat-mdc-card-actions {
     flex-direction: column-reverse;
     gap: 12px;
-    
+
     button {
       width: 100%;
       height: 48px;

@@ -10,8 +10,16 @@ import { UserRole, Permission, RolePermission } from '../../shared/models/user.m
 })
 export class PermissionsComponent implements OnInit {
   userRoles = Object.values(UserRole);
-  availablePermissions: any[] = []
+  availablePermissions: any[] = [
+    { id: 'manage-users', name: 'Manage Users', description: 'Create, edit, and delete user accounts' },
+    { id: 'manage-batches', name: 'Manage Batches', description: 'Create and manage certificate batches' },
+    { id: 'issue-certificates', name: 'Issue Certificates', description: 'Generate and issue certificates' },
+    { id: 'view-reports', name: 'View Reports', description: 'Access system reports and analytics' },
+    { id: 'manual-number-entry', name: 'Manual Number Entry', description: 'Manually enter certificate numbers' },
+    { id: 'dashboard-access', name: 'Dashboard Access', description: 'Access to main dashboard' }
+  ];
   rolePermissions: RolePermissions = {};
+  rolePermissionsArray: { role: string; permissions: string[] }[] = [];
   loading = false;
   saving = false;
 
@@ -26,6 +34,7 @@ export class PermissionsComponent implements OnInit {
     this.settingsService.getRolePermissions().subscribe({
       next: (response) => {
         this.rolePermissions = response.rolePermissions;
+        this.updateRolePermissionsArray();
         this.loading = false;
       },
       error: (error) => {
@@ -33,6 +42,13 @@ export class PermissionsComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  updateRolePermissionsArray(): void {
+    this.rolePermissionsArray = Object.keys(this.rolePermissions).map(role => ({
+      role: role,
+      permissions: this.rolePermissions[role as UserRole] || []
+    }));
   }
 
   getPermissionName(permissionId: string): string {
@@ -65,6 +81,7 @@ export class PermissionsComponent implements OnInit {
     } else {
       permissions.push(permissionId);
     }
+    this.updateRolePermissionsArray();
   }
 
   savePermissions(): void {
@@ -87,6 +104,7 @@ export class PermissionsComponent implements OnInit {
     this.settingsService.resetRolePermissions().subscribe({
       next: (response) => {
         this.rolePermissions = response.rolePermissions;
+        this.updateRolePermissionsArray();
         console.log('Permissions reset to defaults');
       },
       error: (error) => {

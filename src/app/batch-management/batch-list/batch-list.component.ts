@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Batch, BatchType, CertificateType } from '../../shared/models/batch.model';
+import { Batch, BatchType, CertificateType } from '../../core/models/batch.model';
 import { BatchService } from '../../core/services/batch.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { BatchService } from '../../core/services/batch.service';
   styleUrls: ['./batch-list.component.scss']
 })
 export class BatchListComponent implements OnInit {
-  displayedColumns: string[] = ['batchNumber', 'companyName', 'participants', 'type', 'certificateType', 'startDate', 'instructor', 'actions'];
+  displayedColumns: string[] = ['batchNumber', 'companyName', 'participants', 'type', 'certificateType', 'startDate', 'instructorName', 'actions'];
 
   batches: Batch[] = [];
   filteredBatches: Batch[] = [];
@@ -66,12 +66,12 @@ export class BatchListComponent implements OnInit {
   applyAllFilters(searchValue: string = ''): void {
     this.filteredBatches = this.batches.filter(batch => {
       const matchesSearch = !searchValue ||
-        batch.batchNumber.toLowerCase().includes(searchValue) ||
-        batch.companyName.toLowerCase().includes(searchValue) ||
-        batch.instructor.toLowerCase().includes(searchValue);
+        batch.batch_number.toLowerCase().includes(searchValue) ||
+        batch.company_name.toLowerCase().includes(searchValue) ||
+        batch.instructorName.toLowerCase().includes(searchValue);
 
-      const matchesType = !this.filterType || batch.batchType === this.filterType;
-      const matchesCertType = !this.filterCertType || batch.certificateType === this.filterCertType;
+      const matchesType = !this.filterType || batch.batch_type === this.filterType;
+      const matchesCertType = !this.filterCertType || batch.certificate_type === this.filterCertType;
 
       return matchesSearch && matchesType && matchesCertType;
     });

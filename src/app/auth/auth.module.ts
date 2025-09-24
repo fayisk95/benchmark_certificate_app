@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { LoginComponent } from './login.component';
+import { LoginComponent } from './login/login.component';
 import { authRoutes } from './auth.routes';
 
 @NgModule({
