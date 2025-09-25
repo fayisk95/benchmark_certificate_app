@@ -215,11 +215,12 @@ router.put('/permissions/roles', authenticateToken, requirePermission('manage-us
     const validRoles = ['Admin', 'Supervisor', 'Instructor', 'Staff'];
     const validPermissions = [
       'manage-users',
-      'manage-batches', 
+      'manage-batches',
       'issue-certificates',
       'view-reports',
       'manual-number-entry',
-      'dashboard-access'
+      'dashboard-access',
+      'manage-groups'
     ];
 
     // Validate input
@@ -287,22 +288,26 @@ router.post('/permissions/reset', authenticateToken, requirePermission('manage-u
       ['Admin', 'view-reports'],
       ['Admin', 'manual-number-entry'],
       ['Admin', 'dashboard-access'],
-      
+
       // Supervisor permissions
       ['Supervisor', 'manage-batches'],
       ['Supervisor', 'issue-certificates'],
       ['Supervisor', 'view-reports'],
       ['Supervisor', 'manual-number-entry'],
       ['Supervisor', 'dashboard-access'],
-      
+
       // Instructor permissions
       ['Instructor', 'manage-batches'],
       ['Instructor', 'issue-certificates'],
       ['Instructor', 'dashboard-access'],
-      
+
       // Staff permissions
       ['Staff', 'issue-certificates'],
-      ['Staff', 'dashboard-access']
+      ['Staff', 'dashboard-access'],
+
+      // Group management permissions (add to existing roles as needed)
+      ['Admin', 'manage-groups'],
+      ['Supervisor', 'manage-groups']
     ];
 
     // Clear existing permissions

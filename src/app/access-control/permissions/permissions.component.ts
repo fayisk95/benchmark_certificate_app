@@ -16,7 +16,8 @@ export class PermissionsComponent implements OnInit {
     { id: 'issue-certificates', name: 'Issue Certificates', description: 'Generate and issue certificates' },
     { id: 'view-reports', name: 'View Reports', description: 'Access system reports and analytics' },
     { id: 'manual-number-entry', name: 'Manual Number Entry', description: 'Manually enter certificate numbers' },
-    { id: 'dashboard-access', name: 'Dashboard Access', description: 'Access to main dashboard' }
+    { id: 'dashboard-access', name: 'Dashboard Access', description: 'Access to main dashboard' },
+    { id: 'manage-groups', name: 'Miscellaneous Access', description: 'Access to miscellaneous features' }
   ];
   rolePermissions: RolePermissions = {};
   rolePermissionsArray: { role: string; permissions: string[] }[] = [];

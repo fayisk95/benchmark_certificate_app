@@ -16,5 +16,6 @@ export const PERMISSIONS = {
   ISSUE_CERTIFICATES: 'Issue Certificates',
   VIEW_REPORTS: 'View Reports',
   MANUAL_NUMBER_ENTRY: 'Manual Number Entry',
-  DASHBOARD_ACCESS: 'Dashboard Access'
+  DASHBOARD_ACCESS: 'Dashboard Access',
+  MISCELLANEOUS_ACCESS: 'Miscellaneous Access',
 } as const;

@@ -119,6 +119,17 @@ async function seedDatabase() {
     }
     console.log('✅ Role permissions seeded');
 
+    // Seed groups
+    const groups = [
+      ['FIRE_BASIC', 'FIRE_SAFETY', 'Basic Fire Safety', 'Basic fire safety training and certification'],
+      ['FIRE_ADV', 'FIRE_SAFETY', 'Advanced Fire Safety', 'Advanced fire safety training for supervisors'],
+      ['WATER_BASIC', 'WATER_SAFETY', 'Basic Water Safety', 'Basic water safety and rescue training'],
+      ['WATER_ADV', 'WATER_SAFETY', 'Advanced Water Safety', 'Advanced water safety for marine professionals'],
+      ['FIRST_AID', 'MEDICAL', 'First Aid Training', 'Basic first aid and CPR certification'],
+      ['SAFETY_OFFICER', 'SAFETY', 'Safety Officer Training', 'Comprehensive safety officer certification'],
+      ['CONFINED_SPACE', 'SAFETY', 'Confined Space Entry', 'Confined space entry and rescue procedures'],
+      ['HEIGHT_SAFETY', 'SAFETY', 'Working at Heights', 'Safety procedures for working at elevated positions']
+    ];
     console.log('🎉 Database seeding completed successfully!');
     
   } catch (error) {
@@ -127,5 +138,13 @@ async function seedDatabase() {
     process.exit(0);
   }
 }
+
+    for (const group of groups) {
+      await db.execute(
+        'INSERT INTO groups (code_name, group_code, group_name, description) VALUES (?, ?, ?, ?)',
+        group
+      );
+    }
+    console.log('✅ Groups seeded');
 
 seedDatabase();

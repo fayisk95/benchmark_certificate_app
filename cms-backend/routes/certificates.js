@@ -42,20 +42,28 @@ const upload = multer({
 });
 
 // Generate certificate number
-const generateCertificateNumber = async (batchId, userCode, issueDate = new Date()) => {
+const generateCertificateNumber = async (batchId, user_id, issueDate = new Date()) => {
   // 1. Fetch batch details including reserved numbers, training code, and prefix
-  const [batchRows] = await db.execute(
-    'SELECT certificate_type, reserved_cert_numbers, training_code, prefix FROM batches WHERE id = ?',
-    [batchId]
+  const [[certificateFormat]] = await db.execute(
+    "SELECT setting_value FROM settings WHERE setting_key = 'certificate_number_format'"
   );
 
+  const [user_ids] = await db.execute(
+    'SELECT user_code FROM `users` WHERE id=?;',
+    [user_id]
+  );
+  const userCode = user_ids[0].user_code; // e.g., '007'
+  const [batchRows] = await db.execute(
+    'SELECT certificate_type, reserved_cert_numbers, training_code FROM batches WHERE id = ?',
+    [batchId]
+  );
   if (batchRows.length === 0) throw new Error('Invalid batch ID');
   const batch = batchRows[0];
 
   // 2. Parse reserved numbers (unissued sequences)
   let reservedNumbers = [];
   try {
-    reservedNumbers = JSON.parse(batch.reserved_cert_numbers || '[]');
+    reservedNumbers = batch.reserved_cert_numbers || [];
   } catch {
     reservedNumbers = [];
   }
@@ -73,15 +81,20 @@ const generateCertificateNumber = async (batchId, userCode, issueDate = new Date
     [JSON.stringify(reservedNumbers), batchId]
   );
 
-  // 5. Build certificate number
-  const prefix = batch.prefix || 'BM';
   const year = String(new Date().getFullYear()).slice(-2); // e.g., '25'
   const trainingCode = batch.training_code || 'XX';
   const sequence = String(sequenceNumber).padStart(5, '0'); // e.g., '07136'
   const day = String(issueDate.getDate()).padStart(2, '0'); // e.g., '16'
 
-  const certNumber = `${prefix}${year}/${trainingCode}/${sequence}/${userCode}${day}`;
-  return certNumber;
+  const format = certificateFormat?.setting_value || "BM{YY}/{TC}/{#####}/{UID}{DD}";
+
+  // const certNumber = `${prefix}${year}/${trainingCode}/${sequence}/${userCode}${day}`;
+  return format
+    .replace('{YY}', year)
+    .replace('{TC}', trainingCode)
+    .replace('{#####}', sequence)
+    .replace('{UID}', userCode)
+    .replace('{DD}', day);
 };
 
 // Calculate certificate status based on due date
@@ -239,11 +252,8 @@ router.post('/', authenticateToken, requirePermission('issue-certificates'), val
       return res.status(400).json({ error: 'Invalid batch ID' });
     }
 
-    const batch = batchRows[0];
-
-    // Generate certificate number if not provided
     if (!certData.certificate_number) {
-      certData.certificate_number = await generateCertificateNumber(certData.batch_id);
+      certData.certificate_number = await generateCertificateNumber(certData.batch_id, certData.user_id);
     } else {
       // Check if certificate number already exists
       const [existing] = await db.execute(

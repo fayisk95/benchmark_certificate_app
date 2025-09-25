@@ -51,6 +51,7 @@ export interface CreateCertificateRequest {
   training_date: string;
   issue_date: string;
   due_date: string;
+  user_id?: number;
 }
 
 export interface UpdateCertificateRequest {

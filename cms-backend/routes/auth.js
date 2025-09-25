@@ -60,7 +60,7 @@ router.post('/login', validate(userSchemas.login), async (req, res) => {
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const [rows] = await db.execute(
-      'SELECT id, name, email, role, is_active, created_at FROM users WHERE id = ?',
+      'SELECT id, name, email, role, is_active, created_at, user_code FROM users WHERE id = ?',
       [req.user.id]
     );
 
@@ -121,7 +121,7 @@ router.put('/profile', authenticateToken, validate(userSchemas.update), async (r
 
     // Get updated user
     const [rows] = await db.execute(
-      'SELECT id, name, email, role, is_active, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, name, email, role, is_active, created_at, updated_at, user_code FROM users WHERE id = ?',
       [userId]
     );
 

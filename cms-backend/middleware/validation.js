@@ -6,6 +6,7 @@ const userSchemas = {
     name: Joi.string().min(2).max(255).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
+    user_code: Joi.string().min(2).max(2).required(),
     role: Joi.string().valid('Admin', 'Supervisor', 'Instructor', 'Staff').required(),
     is_active: Joi.boolean().default(true)
   }),
@@ -13,6 +14,7 @@ const userSchemas = {
   update: Joi.object({
     name: Joi.string().min(2).max(255),
     email: Joi.string().email(),
+    user_code: Joi.string().min(2).max(2).required(),
     role: Joi.string().valid('Admin', 'Supervisor', 'Instructor', 'Staff'),
     is_active: Joi.boolean()
   }),
@@ -35,6 +37,7 @@ const batchSchemas = {
     start_date: Joi.date().required(),
     end_date: Joi.date().greater(Joi.ref('start_date')).required(),
     instructor_id: Joi.number().integer().required(),
+    training_code: Joi.string().max(100).allow(''),
     description: Joi.string().max(1000).allow('')
   }),
 
@@ -42,10 +45,11 @@ const batchSchemas = {
     company_name: Joi.string().min(2).max(255),
     referred_by: Joi.string().min(2).max(255),
     number_of_participants: Joi.number().integer().min(1).max(100),
-    batch_type: Joi.string().valid('Onsite', 'Hybrid', 'Online'),
-    certificate_type: Joi.string().valid('Fire & Safety', 'Water Safety'),
+    batch_type: Joi.number().required(),
+    certificate_type: Joi.number().required(),
     start_date: Joi.date(),
     end_date: Joi.date(),
+    training_code: Joi.string().max(100).allow(''),
     instructor_id: Joi.number().integer(),
     description: Joi.string().max(1000).allow('')
   })
@@ -63,6 +67,7 @@ const certificateSchemas = {
     training_name: Joi.string().min(2).max(255).required(),
     training_date: Joi.date().required(),
     issue_date: Joi.date().required(),
+    user_id: Joi.number().integer().required(),
     due_date: Joi.date().greater(Joi.ref('issue_date')).required()
   }),
 
@@ -76,6 +81,24 @@ const certificateSchemas = {
     issue_date: Joi.date(),
     due_date: Joi.date(),
     status: Joi.string().valid('Active', 'Expired', 'Expiring Soon')
+  })
+};
+
+// Group validation schemas
+const groupSchemas = {
+  create: Joi.object({
+    code: Joi.string().min(1).max(50).required(),
+    code_name: Joi.string().min(1).max(50).required(),
+    group_code: Joi.string().min(1).max(50).required(),
+    group_name: Joi.string().min(1).max(100).required(),
+    description: Joi.string().max(255).allow('').allow(null)
+  }),
+
+  update: Joi.object({
+    code_name: Joi.string().min(1).max(50),
+    group_code: Joi.string().min(1).max(50),
+    group_name: Joi.string().min(1).max(100),
+    description: Joi.string().max(255).allow('').allow(null)
   })
 };
 
@@ -108,5 +131,6 @@ module.exports = {
   validate,
   userSchemas,
   batchSchemas,
-  certificateSchemas
+  certificateSchemas,
+  groupSchemas
 };

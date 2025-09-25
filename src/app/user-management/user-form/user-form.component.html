@@ -18,6 +18,19 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>User Short Code</mat-label>
+            <input matInput type="text" formControlName="user_code" required>
+            <mat-error *ngIf="userForm.get('user_code')?.hasError('required')">
+              User Short Code is required
+            </mat-error>
+            <mat-error
+              *ngIf="userForm.get('user_code')?.hasError('minlength') || userForm.get('user_code')?.hasError('maxlength')">
+              User Short Code must be 2 characters
+            </mat-error>
+          </mat-form-field>
+        </div>
 
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">

@@ -25,6 +25,7 @@ export class UserFormComponent implements OnInit {
   ) {
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
+      user_code: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       role: [UserRole.STAFF, Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -50,10 +51,12 @@ export class UserFormComponent implements OnInit {
     if (this.userId) {
       this.userService.getUserByIdFromApi(this.userId).subscribe({
         next: (user) => {
+          console.log('Loaded user:', user);
           this.userForm.patchValue({
             name: user.name,
             email: user.email,
             role: user.role,
+            user_code: user.user_code,
             is_active: user.is_active
           });
         },

@@ -33,7 +33,7 @@ export class BatchService {
   private _batches = signal<Batch[]>([]);
   batches = this._batches.asReadonly();
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) { }
 
   loadBatches(params?: any): Observable<BatchesResponse> {
     return this.apiService.get<BatchesResponse>('/batches', params).pipe(
@@ -63,6 +63,7 @@ export class BatchService {
   }
 
   updateBatch(id: string, updates: UpdateBatchRequest): Observable<Batch> {
+    console.log('Updating batch with ID:', id, 'with updates:', updates);
     return this.apiService.put<BatchResponse>(`/batches/${id}`, updates).pipe(
       map(response => response.batch),
       tap(updatedBatch => {

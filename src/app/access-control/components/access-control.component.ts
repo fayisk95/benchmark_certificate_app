@@ -17,6 +17,7 @@ export class AccessControlComponent implements OnInit {
 
   ngOnInit() {
     // Role permissions are loaded from service
+    console.log('Loaded role permissions:', this.rolePermissions);
   }
 
   hasPermission(role: string, permission: string): boolean {

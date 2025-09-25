@@ -5,6 +5,7 @@ import { CertificateService } from '../../core/services/certificate.service';
 import { BatchService } from '../../core/services/batch.service';
 import { Certificate, CreateCertificateRequest, UpdateCertificateRequest } from '../../shared/models/certificate.model';
 import { Batch } from '../../shared/models/batch.model';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   standalone: false,
@@ -24,7 +25,8 @@ export class CertificateFormComponent implements OnInit {
     private certificateService: CertificateService,
     private batchService: BatchService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.certificateForm = this.fb.group({
       batch_id: ['', Validators.required],
@@ -101,7 +103,8 @@ export class CertificateFormComponent implements OnInit {
           training_name: formData.training_name,
           training_date: formData.training_date,
           issue_date: formData.issue_date,
-          due_date: formData.due_date
+          due_date: formData.due_date,
+          // Ensure user_id is not updated
         };
 
         this.certificateService.updateCertificate(this.certificateId, updateRequest).subscribe({
@@ -123,7 +126,8 @@ export class CertificateFormComponent implements OnInit {
           training_name: formData.training_name,
           training_date: formData.training_date,
           issue_date: formData.issue_date,
-          due_date: formData.due_date
+          due_date: formData.due_date,
+          user_id: this.authService.getCurrentUser()?.id
         };
 
         if (formData.certificate_number) {

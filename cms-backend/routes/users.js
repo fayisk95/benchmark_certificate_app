@@ -39,7 +39,7 @@ router.get('/', authenticateToken, requirePermission('manage-users'), async (req
 
     // Get users with pagination
     const [rows] = await db.execute(
-      `SELECT id, name, email, role, is_active, created_at, updated_at 
+      `SELECT id, name,user_code, email, role, is_active, created_at, updated_at 
        FROM users ${whereClause} 
        ORDER BY created_at DESC 
        LIMIT ${limit} OFFSET ${offset}`,
@@ -68,7 +68,7 @@ router.get('/:id', authenticateToken, requirePermission('manage-users'), async (
     const { id } = req.params;
 
     const [rows] = await db.execute(
-      'SELECT id, name, email, role, is_active, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, name, email, role,user_code, is_active, created_at, updated_at FROM users WHERE id = ?',
       [id]
     );
 
@@ -87,7 +87,7 @@ router.get('/:id', authenticateToken, requirePermission('manage-users'), async (
 // Create new user
 router.post('/', authenticateToken, requirePermission('manage-users'), validate(userSchemas.create), async (req, res) => {
   try {
-    const { name, email, password, role, is_active } = req.validatedData;
+    const { name, email, password, role, is_active, user_code } = req.validatedData;
 
     // Check if email already exists
     const [existingUsers] = await db.execute(
@@ -104,13 +104,13 @@ router.post('/', authenticateToken, requirePermission('manage-users'), validate(
 
     // Insert user
     const [result] = await db.execute(
-      'INSERT INTO users (name, email, password, role, is_active) VALUES (?, ?, ?, ?, ?)',
-      [name, email, hashedPassword, role, is_active]
+      'INSERT INTO users (name, email, password, role, is_active,user_code) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, email, hashedPassword, role, is_active, user_code]
     );
 
     // Get created user
     const [rows] = await db.execute(
-      'SELECT id, name, email, role, is_active, created_at FROM users WHERE id = ?',
+      'SELECT id, name, email, role, is_active, created_at,user_code FROM users WHERE id = ?',
       [result.insertId]
     );
 
@@ -177,7 +177,7 @@ router.put('/:id', authenticateToken, requirePermission('manage-users'), validat
 
     // Get updated user
     const [rows] = await db.execute(
-      'SELECT id, name, email, role, is_active, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, name, email, role, is_active, created_at, updated_at,user_code FROM users WHERE id = ?',
       [id]
     );
 

@@ -214,7 +214,6 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
       batchData.number_of_participants,
       batchData.certificate_type
     );
-    console.log(reservedCertNumbers);
     // Insert batch
     const [result] = await db.execute(
       `INSERT INTO batches (
@@ -266,7 +265,6 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
   try {
     const { id } = req.params;
     const updateData = req.validatedData;
-
     // Check if batch exists
     const [existingBatch] = await db.execute(
       'SELECT id, number_of_participants, certificate_type FROM batches WHERE id = ?',
@@ -327,7 +325,6 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
     }
 
     updateValues.push(id);
-
     await db.execute(
       `UPDATE batches SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       updateValues

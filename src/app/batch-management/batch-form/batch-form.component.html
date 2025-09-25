@@ -97,11 +97,23 @@
         <!-- Instructor Assignment -->
         <h3>Instructor Assignment</h3>
         <div class="form-row">
-          <mat-form-field class="full-width" appearance="outline">
+          <mat-form-field class="half-width" appearance="outline">
             <mat-label>Instructor</mat-label>
             <mat-select formControlName="instructor_id">
               <mat-option *ngFor="let instructor of instructors" [value]="instructor.id">
                 {{ instructor.name }} ({{ instructor.email }})
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
+              Please select an instructor
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="half-width" appearance="outline">
+            <mat-label>Instructor</mat-label>
+            <mat-select formControlName="training_code">
+              <mat-option *ngFor="let training of certTrainings" [value]="training.code">
+                {{ training.code_name }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
@@ -114,7 +126,8 @@
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="4" placeholder="Enter batch description or special notes"></textarea>
+            <textarea matInput formControlName="description" rows="4"
+              placeholder="Enter batch description or special notes"></textarea>
           </mat-form-field>
         </div>
 

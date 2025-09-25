@@ -115,6 +115,22 @@ async function createDatabase() {
     `);
     console.log('✅ Role permissions table created');
 
+    // Create groups table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS groups (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        code_name VARCHAR(50) NOT NULL UNIQUE,
+        group_code VARCHAR(50) NOT NULL,
+        group_name VARCHAR(100) NOT NULL,
+        description VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_group_code (group_code),
+        INDEX idx_code_name (code_name)
+      )
+    `);
+    console.log('✅ Groups table created');
+
     console.log('🎉 All tables created successfully!');
     
   } catch (error) {

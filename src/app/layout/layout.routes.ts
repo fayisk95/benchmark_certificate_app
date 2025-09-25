@@ -29,6 +29,10 @@ export const layoutRoutes: Routes = [
       {
         path: 'settings',
         loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)
+      },
+      {
+        path: 'miscellaneous',
+        loadChildren: () => import('../miscellaneous/miscellaneous.module').then(m => m.MiscellaneousModule)
       }
     ]
   }

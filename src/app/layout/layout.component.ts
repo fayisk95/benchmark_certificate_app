@@ -29,6 +29,7 @@ export class LayoutComponent implements OnInit {
     { name: 'Access Control', icon: 'security', route: '/dashboard/access-control', permission: 'manage-users' },
     { name: 'Batches', icon: 'group_work', route: '/dashboard/batches', permission: 'manage-batches' },
     { name: 'Certificates', icon: 'certificate', route: '/dashboard/certificates', permission: 'issue-certificates' },
+    { name: 'Miscellaneous', icon: 'storage', route: '/dashboard/miscellaneous', permission: 'manage-users' },
     { name: 'Settings', icon: 'settings', route: '/dashboard/settings', permission: 'manage-users' }
   ];
 

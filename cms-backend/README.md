@@ -181,6 +181,14 @@ A comprehensive REST API for managing certificates, batches, users, and training
 - `file_size` - File size in bytes
 - `uploaded_at` - Upload timestamp
 
+### Groups Table
+- `id` - Primary key
+- `code_name` - Unique code identifier
+- `group_code` - Group category code
+- `group_name` - Display name for the group
+- `description` - Optional description
+- `created_at`, `updated_at` - Timestamps
+
 ## Authentication & Authorization
 
 The API uses JWT tokens for authentication. Include the token in the Authorization header:

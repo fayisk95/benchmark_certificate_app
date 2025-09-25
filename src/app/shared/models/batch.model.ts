@@ -13,6 +13,7 @@ export interface Batch {
   instructor_email?: string;
   description: string;
   reserved_cert_numbers: string[];
+  training_code: string;
   created_at: string;
   updated_at: string;
 }
@@ -38,6 +39,7 @@ export interface CreateBatchRequest {
   start_date: string;
   end_date: string;
   instructor_id: number;
+  training_code: string;
   description?: string;
 }
 
@@ -50,5 +52,6 @@ export interface UpdateBatchRequest {
   start_date?: string;
   end_date?: string;
   instructor_id?: number;
+  training_code: string;
   description?: string;
 }

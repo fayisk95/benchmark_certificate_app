@@ -1,0 +1,200 @@
+<div class="miscellaneous-container">
+  <div class="page-header">
+    <h1>Miscellaneous Data Management</h1>
+    <p>Manage groups and records for miscellaneous data</p>
+  </div>
+
+  <div class="content-layout">
+    <!-- Groups Section -->
+    <div class="groups-section">
+      <mat-card class="groups-card">
+        <mat-card-header class="card-header">
+          <mat-card-title>Groups</mat-card-title>
+          <button mat-raised-button color="primary" (click)="createGroup()" class="create-button">
+            <mat-icon>add</mat-icon>
+            Create Group
+          </button>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Filters -->
+          <div class="filters-section">
+            <mat-form-field class="search-field" appearance="outline">
+              <mat-label>Search groups</mat-label>
+              <input matInput [(ngModel)]="searchTerm" placeholder="Search by name, code, or group code" (ngModelChange)="onSearchChange()">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field class="filter-field" appearance="outline">
+              <mat-label>Group Code</mat-label>
+              <mat-select [(value)]="selectedGroupCode" (selectionChange)="onGroupCodeChange()">
+                <mat-option value="">All Group Codes</mat-option>
+                <mat-option *ngFor="let code of groupCodes" [value]="code">{{ code }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Groups Table -->
+          <div class="table-container">
+            <table mat-table [dataSource]="filteredGroups" class="groups-table">
+              
+              <ng-container matColumnDef="code_name">
+                <th mat-header-cell *matHeaderCellDef>Code Name</th>
+                <td mat-cell *matCellDef="let group">
+                  <strong class="code-name">{{ group.code_name }}</strong>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="group_name">
+                <th mat-header-cell *matHeaderCellDef>Group Name</th>
+                <td mat-cell *matCellDef="let group">{{ group.group_name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="group_code">
+                <th mat-header-cell *matHeaderCellDef>Group Code</th>
+                <td mat-cell *matCellDef="let group">
+                  <mat-chip class="group-code-chip">{{ group.group_code }}</mat-chip>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let group">
+                  <span class="description-text">{{ group.description || 'No description' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="record_count">
+                <th mat-header-cell *matHeaderCellDef>Records</th>
+                <td mat-cell *matCellDef="let group">
+                  <mat-chip class="record-count-chip" (click)="loadRecordsForGroup(group.id)">
+                    {{ getRecordCount(group.id) }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let group">
+                  <button mat-icon-button [matMenuTriggerFor]="groupMenu" title="Actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #groupMenu="matMenu">
+                    <button mat-menu-item (click)="loadRecordsForGroup(group.id)">
+                      <mat-icon>list</mat-icon>
+                      <span>View Records</span>
+                    </button>
+                    <button mat-menu-item (click)="createRecord(group.id)">
+                      <mat-icon>add</mat-icon>
+                      <span>Add Record</span>
+                    </button>
+                    <button mat-menu-item (click)="editGroup(group)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit Group</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteGroup(group)" class="delete-action">
+                      <mat-icon>delete</mat-icon>
+                      <span>Delete Group</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="groupColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: groupColumns;" 
+                  [class.selected-row]="selectedGroupId === row.id"
+                  (click)="loadRecordsForGroup(row.id)"></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Records Section -->
+    <div class="records-section" *ngIf="selectedGroupId">
+      <mat-card class="records-card">
+        <mat-card-header class="card-header">
+          <div class="records-title">
+            <mat-card-title>Records in "{{ getSelectedGroupName() }}"</mat-card-title>
+            <button mat-icon-button (click)="clearSelection()" title="Close">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <button mat-raised-button color="accent" (click)="createRecord(selectedGroupId)" class="create-button">
+            <mat-icon>add</mat-icon>
+            Add Record
+          </button>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="table-container">
+            <table mat-table [dataSource]="selectedGroupRecords" class="records-table">
+              
+              <ng-container matColumnDef="record_code">
+                <th mat-header-cell *matHeaderCellDef>Record Code</th>
+                <td mat-cell *matCellDef="let record">
+                  <strong class="record-code">{{ record.record_code }}</strong>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="record_name">
+                <th mat-header-cell *matHeaderCellDef>Record Name</th>
+                <td mat-cell *matCellDef="let record">{{ record.record_name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="record_value">
+                <th mat-header-cell *matHeaderCellDef>Value</th>
+                <td mat-cell *matCellDef="let record">
+                  <span class="record-value">{{ record.record_value || '-' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="is_active">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let record">
+                  <mat-chip [class]="record.is_active ? 'status-active' : 'status-inactive'"
+                           (click)="toggleRecordStatus(record)">
+                    {{ record.is_active ? 'Active' : 'Inactive' }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="sort_order">
+                <th mat-header-cell *matHeaderCellDef>Order</th>
+                <td mat-cell *matCellDef="let record">{{ record.sort_order || '-' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let record">
+                  <button mat-icon-button (click)="editRecord(record)" color="primary" title="Edit Record">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="toggleRecordStatus(record)" 
+                          [color]="record.is_active ? 'warn' : 'accent'"
+                          [title]="record.is_active ? 'Deactivate' : 'Activate'">
+                    <mat-icon>{{ record.is_active ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteRecord(record)" color="warn" title="Delete Record">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="recordColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: recordColumns;"></tr>
+            </table>
+
+            <div *ngIf="selectedGroupRecords.length === 0" class="no-records">
+              <mat-icon>inbox</mat-icon>
+              <p>No records found in this group</p>
+              <button mat-raised-button color="primary" (click)="createRecord(selectedGroupId)">
+                Add First Record
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
