@@ -30,7 +30,6 @@ const generateBatchNumber = async () => {
     const lastNum = rows[0].batch_number.match(/\d+$/); // extract trailing number
     if (lastNum) nextNumber = parseInt(lastNum[0], 10) + 1;
   }
-  console.log(format, nextNumber)
   // 3. Replace placeholders
   return format
     .replace("{YYYY}", year)
@@ -39,19 +38,51 @@ const generateBatchNumber = async () => {
 };
 
 // Generate certificate numbers for batch
-const generateCertificateNumbers = (count, certificateType) => {
-  const year = new Date().getFullYear();
-  const prefix = certificateType === 'Fire & Safety' ? 'FS' : 'WS';
-  const startNumber = Math.floor(Math.random() * 1000) + 1;
 
-  const numbers = [];
-  for (let i = 0; i < count; i++) {
-    numbers.push(`${prefix}-${year}-${String(startNumber + i).padStart(4, '0')}`);
+
+const generateCertificateNumbers = async (count, certificateType) => {
+  // 1. Fetch start number from settings (default = 1)
+  const [[certStartRow]] = await db.execute(
+    "SELECT setting_value FROM settings WHERE setting_key = 'certificate_start_number'"
+  );
+
+  let nextNumber = parseInt(certStartRow?.setting_value || 1, 10);
+
+  // 2. Get last reserved number for this certificate type
+  const [rows] = await db.execute(`
+    SELECT reserved_cert_numbers
+    FROM batches
+    WHERE certificate_type = ?
+      AND reserved_cert_numbers IS NOT NULL
+  `, [certificateType]);
+
+  let maxNum = 0;
+  rows.forEach(row => {
+    let numbers;
+    try {
+      numbers = row.reserved_cert_numbers;
+    } catch {
+      numbers = [];
+    }
+
+    numbers.forEach(seq => {
+      if (seq > maxNum) maxNum = seq;
+    });
+  });
+
+  // Continue from the highest found
+  if (maxNum >= nextNumber) {
+    nextNumber = maxNum + 1;
   }
 
-  return numbers;
-};
+  // 3. Generate sequence numbers
+  const sequences = [];
+  for (let i = 0; i < count; i++) {
+    sequences.push(nextNumber + i);
+  }
 
+  return sequences;
+};
 // Get all batches
 router.get('/', authenticateToken, requirePermission('manage-batches'), async (req, res) => {
   try {
@@ -179,11 +210,11 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
     }
 
     // Generate certificate numbers
-    const reservedCertNumbers = generateCertificateNumbers(
+    const reservedCertNumbers = await generateCertificateNumbers(
       batchData.number_of_participants,
       batchData.certificate_type
     );
-
+    console.log(reservedCertNumbers);
     // Insert batch
     const [result] = await db.execute(
       `INSERT INTO batches (

@@ -9,14 +9,14 @@ const userSchemas = {
     role: Joi.string().valid('Admin', 'Supervisor', 'Instructor', 'Staff').required(),
     is_active: Joi.boolean().default(true)
   }),
-  
+
   update: Joi.object({
     name: Joi.string().min(2).max(255),
     email: Joi.string().email(),
     role: Joi.string().valid('Admin', 'Supervisor', 'Instructor', 'Staff'),
     is_active: Joi.boolean()
   }),
-  
+
   login: Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required()
@@ -30,14 +30,14 @@ const batchSchemas = {
     company_name: Joi.string().min(2).max(255).required(),
     referred_by: Joi.string().min(2).max(255).required(),
     number_of_participants: Joi.number().integer().min(1).max(100).required(),
-    batch_type: Joi.string().valid('Onsite', 'Hybrid', 'Online').required(),
-    certificate_type: Joi.string().valid('Fire & Safety', 'Water Safety').required(),
+    batch_type: Joi.number().required(),
+    certificate_type: Joi.number().required(),
     start_date: Joi.date().required(),
     end_date: Joi.date().greater(Joi.ref('start_date')).required(),
     instructor_id: Joi.number().integer().required(),
     description: Joi.string().max(1000).allow('')
   }),
-  
+
   update: Joi.object({
     company_name: Joi.string().min(2).max(255),
     referred_by: Joi.string().min(2).max(255),
@@ -65,7 +65,7 @@ const certificateSchemas = {
     issue_date: Joi.date().required(),
     due_date: Joi.date().greater(Joi.ref('issue_date')).required()
   }),
-  
+
   update: Joi.object({
     name: Joi.string().min(2).max(255),
     nationality: Joi.string().min(2).max(100),

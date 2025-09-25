@@ -42,23 +42,46 @@ const upload = multer({
 });
 
 // Generate certificate number
-const generateCertificateNumber = async (certificateType) => {
-  const year = new Date().getFullYear();
-  const prefix = certificateType === 'Fire & Safety' ? 'FS' : 'WS';
-
-  // Get the last certificate number for this type and year
-  const [rows] = await db.execute(
-    'SELECT certificate_number FROM certificates WHERE certificate_number LIKE ? ORDER BY certificate_number DESC LIMIT 1',
-    [`${prefix}-${year}-%`]
+const generateCertificateNumber = async (batchId, userCode, issueDate = new Date()) => {
+  // 1. Fetch batch details including reserved numbers, training code, and prefix
+  const [batchRows] = await db.execute(
+    'SELECT certificate_type, reserved_cert_numbers, training_code, prefix FROM batches WHERE id = ?',
+    [batchId]
   );
 
-  let nextNumber = 1;
-  if (rows.length > 0) {
-    const lastNumber = rows[0].certificate_number.split('-')[2];
-    nextNumber = parseInt(lastNumber) + 1;
+  if (batchRows.length === 0) throw new Error('Invalid batch ID');
+  const batch = batchRows[0];
+
+  // 2. Parse reserved numbers (unissued sequences)
+  let reservedNumbers = [];
+  try {
+    reservedNumbers = JSON.parse(batch.reserved_cert_numbers || '[]');
+  } catch {
+    reservedNumbers = [];
   }
 
-  return `${prefix}-${year}-${String(nextNumber).padStart(4, '0')}`;
+  if (reservedNumbers.length === 0) {
+    throw new Error('No reserved certificate numbers left for this batch');
+  }
+
+  // 3. Take the first (lowest) reserved number and remove it from the array
+  const sequenceNumber = reservedNumbers.shift();
+
+  // 4. Update batch with the remaining reserved numbers
+  await db.execute(
+    'UPDATE batches SET reserved_cert_numbers = ? WHERE id = ?',
+    [JSON.stringify(reservedNumbers), batchId]
+  );
+
+  // 5. Build certificate number
+  const prefix = batch.prefix || 'BM';
+  const year = String(new Date().getFullYear()).slice(-2); // e.g., '25'
+  const trainingCode = batch.training_code || 'XX';
+  const sequence = String(sequenceNumber).padStart(5, '0'); // e.g., '07136'
+  const day = String(issueDate.getDate()).padStart(2, '0'); // e.g., '16'
+
+  const certNumber = `${prefix}${year}/${trainingCode}/${sequence}/${userCode}${day}`;
+  return certNumber;
 };
 
 // Calculate certificate status based on due date
@@ -220,7 +243,7 @@ router.post('/', authenticateToken, requirePermission('issue-certificates'), val
 
     // Generate certificate number if not provided
     if (!certData.certificate_number) {
-      certData.certificate_number = await generateCertificateNumber(batch.certificate_type);
+      certData.certificate_number = await generateCertificateNumber(certData.batch_id);
     } else {
       // Check if certificate number already exists
       const [existing] = await db.execute(
