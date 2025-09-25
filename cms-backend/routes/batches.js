@@ -8,20 +8,34 @@ const router = express.Router();
 // Generate batch number
 const generateBatchNumber = async () => {
   const year = new Date().getFullYear();
+  const shortYear = String(year).slice(-2);
 
-  // Get the last batch number for this year
-  const [rows] = await db.execute(
-    'SELECT batch_number FROM batches WHERE batch_number LIKE ? ORDER BY batch_number DESC LIMIT 1',
-    [`BTH-${year}-%`]
+  // 1. Fetch format and start number
+  const [[batchFormat]] = await db.execute(
+    "SELECT setting_value FROM settings WHERE setting_key = 'batch_number_format'"
+  );
+  const [[batchStart]] = await db.execute(
+    "SELECT setting_value FROM settings WHERE setting_key = 'batch_start_number'"
   );
 
-  let nextNumber = 1;
-  if (rows.length > 0) {
-    const lastNumber = rows[0].batch_number.split('-')[2];
-    nextNumber = parseInt(lastNumber) + 1;
-  }
+  const format = batchFormat?.setting_value || "BM-{#####}";
+  let nextNumber = parseInt(batchStart?.setting_value || 1, 10) + 1;
 
-  return `BTH-${year}-${String(nextNumber).padStart(3, '0')}`;
+  // 2. Find last batch number from DB
+  const [rows] = await db.execute(
+    "SELECT batch_number FROM batches ORDER BY id DESC LIMIT 1"
+  );
+
+  if (rows.length > 0) {
+    const lastNum = rows[0].batch_number.match(/\d+$/); // extract trailing number
+    if (lastNum) nextNumber = parseInt(lastNum[0], 10) + 1;
+  }
+  console.log(format, nextNumber)
+  // 3. Replace placeholders
+  return format
+    .replace("{YYYY}", year)
+    .replace("{YY}", shortYear)
+    .replace("{#####}", String(nextNumber).padStart(5, "0"));
 };
 
 // Generate certificate numbers for batch
