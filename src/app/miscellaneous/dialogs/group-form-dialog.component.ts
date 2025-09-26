@@ -18,27 +18,6 @@ interface DialogData {
       <form [formGroup]="groupForm" class="group-form">
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Code </mat-label>
-            <input matInput formControlName="code" placeholder="Enter unique code">
-            <mat-hint>Unique identifier for this group</mat-hint>
-            <mat-error *ngIf="groupForm.get('code')?.hasError('required')">
-              Code is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-row">
-          <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Code Name</mat-label>
-            <input matInput formControlName="code_name" placeholder="Enter unique code name">
-            <mat-hint>Unique identifier for this group</mat-hint>
-            <mat-error *ngIf="groupForm.get('code_name')?.hasError('required')">
-              Code name is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
             <mat-label>Group Code</mat-label>
             <input matInput formControlName="group_code" placeholder="Enter group code">
             <mat-hint>Category code for grouping</mat-hint>
@@ -46,8 +25,9 @@ interface DialogData {
               Group code is required
             </mat-error>
           </mat-form-field>
-
-          <mat-form-field class="half-width" appearance="outline">
+ </div>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
             <mat-label>Group Name</mat-label>
             <input matInput formControlName="group_name" placeholder="Enter display name">
             <mat-error *ngIf="groupForm.get('group_name')?.hasError('required')">
@@ -55,7 +35,27 @@ interface DialogData {
             </mat-error>
           </mat-form-field>
         </div>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Misc Code </mat-label>
+            <input matInput formControlName="code" placeholder="Enter unique code">
+            <mat-hint>Unique identifier for this Data</mat-hint>
+            <mat-error *ngIf="groupForm.get('code')?.hasError('required')">
+              Code is required
+            </mat-error>
+          </mat-form-field> </div>
+        <div class="form-row">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Misc Name </mat-label>
+            <input matInput formControlName="name" placeholder="Enter unique name">
+            <mat-hint>Unique identifier for this Data</mat-hint>
+            <mat-error *ngIf="groupForm.get('code')?.hasError('required')">
+              Code is required
+            </mat-error>
+          </mat-form-field>
 
+        </div>
+        
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Description</mat-label>
@@ -124,7 +124,7 @@ export class GroupFormDialogComponent implements OnInit {
   ) {
     this.groupForm = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(1)]],
-      code_name: ['', [Validators.required, Validators.minLength(1)]],
+      name: ['', [Validators.required, Validators.minLength(1)]],
       group_code: ['', [Validators.required, Validators.minLength(1)]],
       group_name: ['', [Validators.required, Validators.minLength(1)]],
       description: ['']
@@ -134,10 +134,11 @@ export class GroupFormDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.data.isEdit && this.data.group) {
       this.groupForm.patchValue({
-        code_name: this.data.group.code_name,
-        group_code: this.data.group.group_code,
-        group_name: this.data.group.group_name,
-        description: this.data.group.description || ''
+        code: this.data.group.misc_code,
+        name: this.data.group.misc_name,
+        group_code: this.data.group.misc_group_code,
+        group_name: this.data.group.misc_group_name,
+        description: this.data.group.misc_description || ''
       });
     }
   }

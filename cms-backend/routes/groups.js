@@ -8,19 +8,19 @@ const router = express.Router();
 // Get all groups
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', group_code = '' } = req.query;
+    const { page = 1, limit = 10, search = '', misc_group_code = '' } = req.query;
     const offset = (page - 1) * limit;
 
     let whereClause = 'WHERE 1=1';
     const queryParams = [];
 
     if (search) {
-      whereClause += ' AND (code_name LIKE ? OR group_name LIKE ? OR description LIKE ?)';
+      whereClause += ' AND (misc_name LIKE ? OR misc_group_name LIKE ? OR misc_description LIKE ?)';
       queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
-    if (group_code) {
-      whereClause += ' AND group_code = ?';
+    if (misc_group_code) {
+      whereClause += ' AND misc_group_code = ?';
       queryParams.push(group_code);
     }
 
@@ -33,7 +33,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Get groups with pagination
     const [rows] = await db.execute(
-      `SELECT id, code, code_name, group_code, group_name, description, created_at, updated_at 
+      `SELECT id, misc_code, misc_name, misc_group_code, misc_group_name, misc_description, created_at, updated_at 
        FROM miscellaneous ${whereClause} 
        ORDER BY created_at DESC 
        LIMIT ${limit} OFFSET ${offset}`,
@@ -55,14 +55,27 @@ router.get('/', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch groups' });
   }
 });
-
+router.get('/group-codes/', async (req, res) => {
+  try {
+    const [rows] = await db.execute(`
+      SELECT * FROM miscellaneous
+      WHERE misc_group_code IS NOT NULL
+      GROUP BY misc_group_code
+      ORDER BY misc_group_code ASC
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching group codes:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 // Get group by ID
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
     const [rows] = await db.execute(
-      'SELECT id, code, code_name, group_code, group_name, description, created_at, updated_at FROM miscellaneous WHERE id = ?',
+      'SELECT id, misc_code, misc_name, misc_group_code, misc_group_name, misc_description, created_at, updated_at FROM miscellaneous WHERE id = ?',
       [id]
     );
 
@@ -81,12 +94,12 @@ router.get('/:id', authenticateToken, async (req, res) => {
 // Create new group
 router.post('/', authenticateToken, requirePermission('manage-groups'), validate(groupSchemas.create), async (req, res) => {
   try {
-    const { code, code_name, group_code, group_name, description } = req.validatedData;
+    const { misc_code, misc_name, misc_group_code, misc_group_name, misc_description } = req.validatedData;
 
-    // Check if code_name already exists
+    // Check if misc_code already exists
     const [existingGroups] = await db.execute(
-      'SELECT id FROM miscellaneous WHERE code = ?',
-      [code]
+      'SELECT id FROM miscellaneous WHERE misc_code = ? AND misc_group_code = ?',
+      [misc_code, misc_group_code]
     );
 
     if (existingGroups.length > 0) {
@@ -95,13 +108,13 @@ router.post('/', authenticateToken, requirePermission('manage-groups'), validate
 
     // Insert group
     const [result] = await db.execute(
-      'INSERT INTO miscellaneous (code, code_name, group_code, group_name, description) VALUES (?,?, ?, ?, ?)',
-      [code, code_name, group_code, group_name, description || null]
+      'INSERT INTO miscellaneous (misc_code, misc_name, misc_group_code, misc_group_name, misc_description) VALUES (?,?, ?, ?, ?)',
+      [misc_code, misc_name, misc_group_code, misc_group_name, misc_description || null]
     );
 
     // Get created group
     const [rows] = await db.execute(
-      'SELECT id, code,code_name, group_code, group_name, description, created_at, updated_at FROM miscellaneous WHERE id = ?',
+      'SELECT id, misc_code, misc_name, misc_group_code, misc_group_name, misc_description, created_at, updated_at FROM miscellaneous WHERE id = ?',
       [result.insertId]
     );
 
@@ -133,10 +146,10 @@ router.put('/:id', authenticateToken, requirePermission('manage-groups'), valida
     }
 
     // Check if code_name is already taken by another group
-    if (updateData.code_name) {
+    if (updateData.misc_code) {
       const [codeCheck] = await db.execute(
-        'SELECT id FROM miscellaneous WHERE code_name = ? AND id != ?',
-        [updateData.code_name, id]
+        'SELECT id FROM miscellaneous WHERE misc_code = ? AND id != ?',
+        [updateData.misc_code, id]
       );
 
       if (codeCheck.length > 0) {
@@ -162,13 +175,13 @@ router.put('/:id', authenticateToken, requirePermission('manage-groups'), valida
     updateValues.push(id);
 
     await db.execute(
-      `UPDATE groups SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      `UPDATE miscellaneous SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       updateValues
     );
 
     // Get updated group
     const [rows] = await db.execute(
-      'SELECT id, code, code_name, group_code, group_name, description, created_at, updated_at FROM miscellaneous WHERE id = ?',
+      'SELECT id, misc_code, misc_name, misc_group_code, misc_group_name, misc_description, created_at, updated_at FROM miscellaneous WHERE id = ?',
       [id]
     );
 
@@ -224,13 +237,38 @@ router.delete('/:id', authenticateToken, requirePermission('manage-groups'), asy
   }
 });
 
+router.delete('/group/:id', authenticateToken, requirePermission('manage-groups'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if group exists
+    const [existingGroups] = await db.execute(
+      'SELECT id FROM miscellaneous WHERE misc_group_code = ?',
+      [id]
+    );
+
+    if (existingGroups.length === 0) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    // Delete group
+    await db.execute('DELETE FROM miscellaneous WHERE misc_group_code = ?', [id]);
+
+    res.json({ message: 'Group deleted successfully' });
+
+  } catch (error) {
+    console.error('Delete group error:', error);
+    res.status(500).json({ error: 'Failed to delete group' });
+  }
+});
+
 // Get groups by group_code (utility endpoint)
 router.get('/by-code/:group_code', authenticateToken, async (req, res) => {
   try {
     const { group_code } = req.params;
 
     const [rows] = await db.execute(
-      'SELECT id, code_name, group_code, group_name, description, created_at, updated_at FROM miscellaneous WHERE group_code = ? ORDER BY group_name',
+      'SELECT id, misc_code, misc_name, misc_group_code, misc_group_name, misc_description, created_at, updated_at FROM miscellaneous WHERE misc_group_code = ? ORDER BY misc_code',
       [group_code]
     );
 
@@ -260,7 +298,7 @@ router.get('/stats/overview', authenticateToken, async (req, res) => {
 
     // Get recently created groups
     const [recentGroups] = await db.execute(`
-      SELECT id, code_name, group_name, created_at
+      SELECT id, misc_code, misc_name, created_at
       FROM miscellaneous 
       ORDER BY created_at DESC 
       LIMIT 5
@@ -277,5 +315,6 @@ router.get('/stats/overview', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch group statistics' });
   }
 });
+
 
 module.exports = router;

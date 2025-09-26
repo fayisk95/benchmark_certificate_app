@@ -1,6 +1,5 @@
 .certificate-form-container {
   padding: 24px;
-  max-width: 900px;
   margin: 0 auto;
   font-family: 'Inter', sans-serif;
 }
@@ -11,12 +10,12 @@
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
   overflow: hidden;
-  
+
   .mat-mdc-card-header {
     padding: 32px 32px 0 32px;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 32px;
-    
+
     .mat-mdc-card-title {
       color: var(--primary-color);
       font-size: 28px;
@@ -25,41 +24,42 @@
       margin: 0 0 16px 0;
     }
   }
-  
+
   .mat-mdc-card-content {
     padding: 0 32px 32px 32px;
   }
-  
+
   .form-row {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
-    
+
     .full-width {
       flex: 1;
     }
-    
+
     .half-width {
       flex: 1;
     }
   }
-  
+
   .mat-mdc-form-field {
     margin-bottom: 4px;
-    
+
     .mat-mdc-floating-label {
       font-family: 'Inter', sans-serif !important;
       font-weight: 500 !important;
       font-size: 14px !important;
     }
-    
-    input, select {
+
+    input,
+    select {
       font-family: 'Inter', sans-serif !important;
       font-size: 15px !important;
       font-weight: 400 !important;
       color: var(--text-color) !important;
     }
-    
+
     .mat-mdc-form-field-error {
       font-family: 'Inter', sans-serif !important;
       font-size: 12px !important;
@@ -67,7 +67,7 @@
       color: #EF4444 !important;
       margin-top: 4px;
     }
-    
+
     .mat-mdc-form-field-hint {
       font-family: 'Inter', sans-serif !important;
       font-size: 12px !important;
@@ -76,7 +76,7 @@
       margin-top: 4px;
     }
   }
-  
+
   .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -84,18 +84,18 @@
     margin-top: 40px;
     padding-top: 24px;
     border-top: 1px solid var(--border-color);
-    
+
     .mat-mdc-button {
       color: var(--text-light);
       font-family: 'Inter', sans-serif;
       font-weight: 500;
-      
+
       &:hover {
         background-color: var(--light-gray);
         color: var(--primary-color);
       }
     }
-    
+
     .mat-mdc-raised-button {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
@@ -109,34 +109,34 @@
   .certificate-form-container {
     padding: 16px;
   }
-  
+
   .certificate-form-card {
     .mat-mdc-card-header {
       padding: 24px 24px 0 24px;
-      
+
       .mat-mdc-card-title {
         font-size: 24px;
       }
     }
-    
+
     .mat-mdc-card-content {
       padding: 0 24px 24px 24px;
     }
   }
-  
+
   .form-row {
     flex-direction: column;
     gap: 0;
-    
+
     .half-width {
       width: 100%;
     }
   }
-  
+
   .form-actions {
     flex-direction: column-reverse;
     gap: 12px;
-    
+
     button {
       width: 100%;
       height: 48px;

@@ -21,6 +21,7 @@ export interface CreateUserRequest {
   email: string;
   password: string;
   role: UserRole;
+  user_code?: string;
   is_active?: boolean;
 }
 
@@ -28,6 +29,7 @@ export interface UpdateUserRequest {
   name?: string;
   email?: string;
   role?: UserRole;
+  user_code?: string;
   is_active?: boolean;
 }
 

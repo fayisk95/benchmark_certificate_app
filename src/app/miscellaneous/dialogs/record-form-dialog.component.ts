@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MiscellaneousRecord } from '../models/miscellaneous.model';
+import { MiscellaneousGroup } from '../models/miscellaneous.model';
 
 interface DialogData {
   isEdit: boolean;
-  record?: MiscellaneousRecord;
+  record?: MiscellaneousGroup;
   groupId: number;
 }
 
@@ -19,28 +19,28 @@ interface DialogData {
       <form [formGroup]="recordForm" class="record-form">
         <div class="form-row">
           <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Record Code</mat-label>
-            <input matInput formControlName="record_code" placeholder="Enter unique record code">
-            <mat-hint>Unique identifier for this record</mat-hint>
-            <mat-error *ngIf="recordForm.get('record_code')?.hasError('required')">
-              Record code is required
+            <mat-label>Misc Code</mat-label>
+            <input matInput formControlName="misc_code" placeholder="Enter unique misc code">
+            <mat-hint>Unique identifier for this misc</mat-hint>
+            <mat-error *ngIf="recordForm.get('misc_code')?.hasError('required')">
+              Misc code is required
             </mat-error>
           </mat-form-field>
 
           <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Record Name</mat-label>
-            <input matInput formControlName="record_name" placeholder="Enter display name">
-            <mat-error *ngIf="recordForm.get('record_name')?.hasError('required')">
-              Record name is required
+            <mat-label>Miscellaneous Name</mat-label>
+            <input matInput formControlName="misc_name" placeholder="Enter display name">
+            <mat-error *ngIf="recordForm.get('misc_name')?.hasError('required')">
+              Miscellaneous name is required
             </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-row">
           <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Record Value</mat-label>
-            <input matInput formControlName="record_value" placeholder="Enter optional value">
-            <mat-hint>Optional value associated with this record</mat-hint>
+            <mat-label>Miscellaneous Group</mat-label>
+            <input matInput formControlName="misc_group_name" placeholder="Enter optional group">
+            <mat-hint>Optional group associated with this misc</mat-hint>
           </mat-form-field>
         </div>
 
@@ -50,21 +50,6 @@ interface DialogData {
             <textarea matInput formControlName="description" rows="3" 
                      placeholder="Enter optional description"></textarea>
           </mat-form-field>
-        </div>
-
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Sort Order</mat-label>
-            <input matInput type="number" formControlName="sort_order" 
-                   placeholder="Enter sort order" min="0">
-            <mat-hint>Optional ordering for display</mat-hint>
-          </mat-form-field>
-
-          <div class="half-width status-toggle">
-            <mat-slide-toggle formControlName="is_active" color="accent">
-              Record is active
-            </mat-slide-toggle>
-          </div>
         </div>
       </form>
     </mat-dialog-content>
@@ -146,24 +131,20 @@ export class RecordFormDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
     this.recordForm = this.fb.group({
-      record_code: ['', [Validators.required, Validators.minLength(1)]],
-      record_name: ['', [Validators.required, Validators.minLength(1)]],
-      record_value: [''],
-      description: [''],
-      sort_order: [0, [Validators.min(0)]],
-      is_active: [true]
+      misc_code: ['', [Validators.required, Validators.minLength(1)]],
+      misc_name: ['', [Validators.required, Validators.minLength(1)]],
+      misc_group_name: [{ value: '', disabled: true }],
+      description: ['']
     });
   }
 
   ngOnInit(): void {
     if (this.data.isEdit && this.data.record) {
       this.recordForm.patchValue({
-        record_code: this.data.record.record_code,
-        record_name: this.data.record.record_name,
-        record_value: this.data.record.record_value || '',
-        description: this.data.record.description || '',
-        sort_order: this.data.record.sort_order || 0,
-        is_active: this.data.record.is_active
+        misc_code: this.data.record.misc_code,
+        misc_name: this.data.record.misc_name,
+        misc_group_name: this.data.record.misc_group_name || '',
+        description: this.data.record.misc_description || ''
       });
     }
   }

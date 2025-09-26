@@ -86,6 +86,7 @@ export class UserFormComponent implements OnInit {
           email: formData.email,
           password: formData.password,
           role: formData.role,
+          user_code: formData.user_code,
           is_active: formData.is_active
         };
 
@@ -106,6 +107,7 @@ export class UserFormComponent implements OnInit {
           name: formData.name,
           email: formData.email,
           role: formData.role,
+          user_code: formData.user_code,
           is_active: formData.is_active
         };
 

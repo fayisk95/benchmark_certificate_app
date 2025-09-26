@@ -2,13 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
-import { 
-  MiscellaneousGroup, 
-  MiscellaneousRecord, 
-  CreateGroupRequest, 
+import {
+  MiscellaneousGroup,
+  CreateGroupRequest,
   UpdateGroupRequest,
-  CreateRecordRequest,
-  UpdateRecordRequest
 } from '../models/miscellaneous.model';
 
 interface GroupsResponse {
@@ -25,39 +22,21 @@ interface GroupResponse {
   group: MiscellaneousGroup;
   message?: string;
 }
-
-interface RecordsResponse {
-  records: MiscellaneousRecord[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
-
-interface RecordResponse {
-  record: MiscellaneousRecord;
-  message?: string;
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class MiscellaneousService {
   private _groups = signal<MiscellaneousGroup[]>([]);
-  private _records = signal<MiscellaneousRecord[]>([]);
-  
-  groups = this._groups.asReadonly();
-  records = this._records.asReadonly();
 
-  constructor(private apiService: ApiService) {}
+  groups = this._groups.asReadonly();
+
+  constructor(private apiService: ApiService) { }
 
   // Group operations
-  loadGroups(params?: any): Observable<GroupsResponse> {
-    return this.apiService.get<GroupsResponse>('/groups', params).pipe(
+  loadGroups(params?: any): Observable<MiscellaneousGroup[]> {
+    return this.apiService.get<MiscellaneousGroup[]>('/groups/group-codes', params).pipe(
       tap(response => {
-        this._groups.set(response.groups);
+        this._groups.set(response);
       })
     );
   }
@@ -85,6 +64,14 @@ export class MiscellaneousService {
   }
 
   deleteGroup(id: string): Observable<any> {
+    return this.apiService.delete(`/groups/group/${id}`).pipe(
+      tap(() => {
+        this._groups.update(groups => groups.filter(group => group.id.toString() !== id));
+      })
+    );
+  }
+
+  deleteRecord(id: string): Observable<any> {
     return this.apiService.delete(`/groups/${id}`).pipe(
       tap(() => {
         this._groups.update(groups => groups.filter(group => group.id.toString() !== id));
@@ -102,53 +89,9 @@ export class MiscellaneousService {
     );
   }
 
-  // Record operations
-  loadRecords(groupId?: number, params?: any): Observable<RecordsResponse> {
-    const endpoint = groupId ? `/groups/${groupId}/records` : '/records';
-    return this.apiService.get<RecordsResponse>(endpoint, params).pipe(
-      tap(response => {
-        this._records.set(response.records);
-      })
+  getRecordsByGroup(groupId: string): Observable<MiscellaneousGroup[]> {
+    return this.apiService.get<GroupsResponse>(`/groups/by-code/${groupId}`).pipe(
+      map(response => response.groups)
     );
-  }
-
-  createRecord(request: CreateRecordRequest): Observable<MiscellaneousRecord> {
-    return this.apiService.post<RecordResponse>('/records', request).pipe(
-      map(response => response.record),
-      tap(record => {
-        this._records.update(records => [...records, record]);
-      })
-    );
-  }
-
-  updateRecord(id: string, updates: UpdateRecordRequest): Observable<MiscellaneousRecord> {
-    return this.apiService.put<RecordResponse>(`/records/${id}`, updates).pipe(
-      map(response => response.record),
-      tap(updatedRecord => {
-        this._records.update(records =>
-          records.map(record =>
-            record.id.toString() === id ? updatedRecord : record
-          )
-        );
-      })
-    );
-  }
-
-  deleteRecord(id: string): Observable<any> {
-    return this.apiService.delete(`/records/${id}`).pipe(
-      tap(() => {
-        this._records.update(records => records.filter(record => record.id.toString() !== id));
-      })
-    );
-  }
-
-  getRecordsByGroup(groupId: number): MiscellaneousRecord[] {
-    return this.records().filter(record => record.group_id === groupId);
-  }
-
-  // Utility methods
-  getGroupCodes(): string[] {
-    const codes = this.groups().map(group => group.group_code);
-    return [...new Set(codes)].sort();
   }
 }

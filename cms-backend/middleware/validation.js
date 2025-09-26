@@ -87,18 +87,19 @@ const certificateSchemas = {
 // Group validation schemas
 const groupSchemas = {
   create: Joi.object({
-    code: Joi.string().min(1).max(50).required(),
-    code_name: Joi.string().min(1).max(50).required(),
-    group_code: Joi.string().min(1).max(50).required(),
-    group_name: Joi.string().min(1).max(100).required(),
-    description: Joi.string().max(255).allow('').allow(null)
+    misc_code: Joi.string().min(1).max(50).required(),
+    misc_name: Joi.string().min(1).max(50).required(),
+    misc_group_code: Joi.string().min(1).max(50).required(),
+    misc_group_name: Joi.string().min(1).max(100).required(),
+    misc_description: Joi.string().max(255).allow('').allow(null)
   }),
 
   update: Joi.object({
-    code_name: Joi.string().min(1).max(50),
-    group_code: Joi.string().min(1).max(50),
-    group_name: Joi.string().min(1).max(100),
-    description: Joi.string().max(255).allow('').allow(null)
+    misc_code: Joi.string().min(1).max(50).required(),
+    misc_name: Joi.string().min(1).max(50).required(),
+    misc_group_code: Joi.string().min(1).max(50).required(),
+    misc_group_name: Joi.string().min(1).max(100).required(),
+    misc_description: Joi.string().max(255).allow('').allow(null)
   })
 };
 
