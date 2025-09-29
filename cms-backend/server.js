@@ -14,6 +14,7 @@ const certificateRoutes = require('./routes/certificates');
 const dashboardRoutes = require('./routes/dashboard');
 const settingsRoutes = require('./routes/settings');
 const groupRoutes = require('./routes/groups');
+const exportRoutes = require('./routes/export');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -59,6 +60,7 @@ app.use('/api/certificates', certificateRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/export', exportRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -72,21 +74,21 @@ app.get('/api/health', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  
+
   if (err.name === 'ValidationError') {
     return res.status(400).json({
       error: 'Validation Error',
       details: err.details
     });
   }
-  
+
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({
       error: 'Unauthorized',
       message: 'Invalid token'
     });
   }
-  
+
   res.status(500).json({
     error: 'Internal Server Error',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'

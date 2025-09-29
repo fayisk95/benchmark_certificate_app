@@ -22,7 +22,7 @@ export interface ApiResponse<T> {
 export class ApiService {
   private baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('authToken');
@@ -44,7 +44,7 @@ export class ApiService {
 
   get<T>(endpoint: string, params?: any): Observable<T> {
     let httpParams = new HttpParams();
-    
+
     if (params) {
       Object.keys(params).forEach(key => {
         if (params[key] !== null && params[key] !== undefined) {

@@ -6,6 +6,9 @@ import { BatchService } from '../../core/services/batch.service';
 import { Certificate, CreateCertificateRequest, UpdateCertificateRequest } from '../../shared/models/certificate.model';
 import { Batch } from '../../shared/models/batch.model';
 import { AuthService } from '../../shared/services/auth.service';
+import { MiscellaneousGroup } from '../../miscellaneous/models/miscellaneous.model';
+import { MiscellaneousService } from '../../miscellaneous/services/miscellaneous.service';
+import { StorageService } from '../../shared/services/storage.service';
 
 @Component({
   standalone: false,
@@ -19,15 +22,19 @@ export class CertificateFormComponent implements OnInit {
   certificateId: string | null = null;
   batches: Batch[] = [];
   isLoading = false;
-
+  trainingPrograms: MiscellaneousGroup[] = [];
+  sub1$: any;
+  sub2$: any;
   constructor(
     private fb: FormBuilder,
     private certificateService: CertificateService,
     private batchService: BatchService,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private storageSvc: StorageService
   ) {
+    storageSvc.loadCertTrainings(); // Ensure trainings are loaded
     this.certificateForm = this.fb.group({
       batch_id: ['', Validators.required],
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -39,6 +46,17 @@ export class CertificateFormComponent implements OnInit {
       issue_date: ['', Validators.required],
       due_date: ['', Validators.required],
       certificate_number: [''] // Optional for manual override
+    });
+
+    this.sub2$ = this.certificateForm.get('batch_id')?.valueChanges.subscribe(batchId => {
+      const selectedBatch = this.batches.find(b => b.id === batchId);
+      if (selectedBatch) {
+        this.certificateForm.patchValue({
+          training_name: this.storageSvc.getCertTrainingNameById(selectedBatch.training_code) || '',
+          employer: selectedBatch.company_name
+        });
+        console.log('Selected Batch:', selectedBatch);
+      }
     });
   }
 
@@ -117,6 +135,7 @@ export class CertificateFormComponent implements OnInit {
           }
         });
       } else {
+        console.log('Creating certificate with data:', formData);
         const createRequest: CreateCertificateRequest = {
           batch_id: formData.batch_id,
           name: formData.name,

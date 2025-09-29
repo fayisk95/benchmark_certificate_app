@@ -35,7 +35,7 @@ const batchSchemas = {
     batch_type: Joi.number().required(),
     certificate_type: Joi.number().required(),
     start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref('start_date')).required(),
+    end_date: Joi.date().required(),
     instructor_id: Joi.number().integer().required(),
     training_code: Joi.string().max(100).allow(''),
     description: Joi.string().max(1000).allow('')

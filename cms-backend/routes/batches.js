@@ -47,7 +47,6 @@ const generateCertificateNumbers = async (count, certificateType) => {
   );
 
   let nextNumber = parseInt(certStartRow?.setting_value || 1, 10);
-
   // 2. Get last reserved number for this certificate type
   const [rows] = await db.execute(`
     SELECT reserved_cert_numbers
@@ -55,7 +54,6 @@ const generateCertificateNumbers = async (count, certificateType) => {
     WHERE certificate_type = ?
       AND reserved_cert_numbers IS NOT NULL
   `, [certificateType]);
-
   let maxNum = 0;
   rows.forEach(row => {
     let numbers;
@@ -64,12 +62,10 @@ const generateCertificateNumbers = async (count, certificateType) => {
     } catch {
       numbers = [];
     }
-
     numbers.forEach(seq => {
       if (seq > maxNum) maxNum = seq;
     });
   });
-
   // Continue from the highest found
   if (maxNum >= nextNumber) {
     nextNumber = maxNum + 1;
@@ -80,7 +76,6 @@ const generateCertificateNumbers = async (count, certificateType) => {
   for (let i = 0; i < count; i++) {
     sequences.push(nextNumber + i);
   }
-
   return sequences;
 };
 // Get all batches
@@ -219,8 +214,8 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
       `INSERT INTO batches (
         batch_number, company_name, referred_by, number_of_participants,
         batch_type, certificate_type, start_date, end_date,
-        instructor_id, description, reserved_cert_numbers
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        instructor_id, description, reserved_cert_numbers, training_code
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         batchData.batch_number,
         batchData.company_name,
@@ -232,7 +227,8 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
         batchData.end_date,
         batchData.instructor_id,
         batchData.description || '',
-        JSON.stringify(reservedCertNumbers)
+        JSON.stringify(reservedCertNumbers),
+        batchData.training_code || ''
       ]
     );
 
@@ -261,19 +257,23 @@ router.post('/', authenticateToken, requirePermission('manage-batches'), validat
 });
 
 // Update batch
+
 router.put('/:id', authenticateToken, requirePermission('manage-batches'), validate(batchSchemas.update), async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.validatedData;
     // Check if batch exists
-    const [existingBatch] = await db.execute(
-      'SELECT id, number_of_participants, certificate_type FROM batches WHERE id = ?',
+    const [existingBatchRows] = await db.execute(
+      'SELECT id, number_of_participants, certificate_type, reserved_cert_numbers FROM batches WHERE id = ?',
       [id]
     );
 
-    if (existingBatch.length === 0) {
+    if (existingBatchRows.length === 0) {
       return res.status(404).json({ error: 'Batch not found' });
     }
+
+    const batch = existingBatchRows[0];
+    let reservedCerts = batch.reserved_cert_numbers ? batch.reserved_cert_numbers : [];
 
     // Verify instructor if provided
     if (updateData.instructor_id) {
@@ -287,16 +287,27 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
       }
     }
 
-    // Check if we need to regenerate certificate numbers
-    const batch = existingBatch[0];
+    // Determine new certificate numbers logic
     let shouldRegenerateCerts = false;
 
-    if (updateData.number_of_participants && updateData.number_of_participants !== batch.number_of_participants) {
+    if (updateData.certificate_type && updateData.certificate_type != batch.certificate_type) {
+      // Certificate type changed → regenerate fully
       shouldRegenerateCerts = true;
     }
 
-    if (updateData.certificate_type && updateData.certificate_type !== batch.certificate_type) {
-      shouldRegenerateCerts = true;
+    if (updateData.number_of_participants && updateData.number_of_participants !== batch.number_of_participants) {
+      const newCount = updateData.number_of_participants;
+      if (!shouldRegenerateCerts) {
+        // Extend or trim based on difference
+        if (newCount > reservedCerts.length) {
+          const extraNeeded = newCount - reservedCerts.length;
+
+          const extraCerts = await generateCertificateNumbers(extraNeeded, batch.certificate_type);
+          reservedCerts = [...reservedCerts, ...extraCerts];
+        } else {
+          reservedCerts = reservedCerts.slice(0, newCount);
+        }
+      }
     }
 
     // Build update query
@@ -310,14 +321,16 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
       }
     });
 
-    // Regenerate certificate numbers if needed
+    // Apply cert updates
     if (shouldRegenerateCerts) {
       const newParticipants = updateData.number_of_participants || batch.number_of_participants;
       const newCertType = updateData.certificate_type || batch.certificate_type;
-      const newCertNumbers = generateCertificateNumbers(newParticipants, newCertType);
+      reservedCerts = await generateCertificateNumbers(newParticipants, newCertType);
+    }
 
+    if (updateData.number_of_participants || updateData.certificate_type) {
       updateFields.push('reserved_cert_numbers = ?');
-      updateValues.push(JSON.stringify(newCertNumbers));
+      updateValues.push(JSON.stringify(reservedCerts));
     }
 
     if (updateFields.length === 0) {
@@ -354,6 +367,7 @@ router.put('/:id', authenticateToken, requirePermission('manage-batches'), valid
     res.status(500).json({ error: 'Failed to update batch' });
   }
 });
+
 
 // Delete batch
 router.delete('/:id', authenticateToken, requirePermission('manage-batches'), async (req, res) => {

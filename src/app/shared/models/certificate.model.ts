@@ -12,6 +12,7 @@ export interface Certificate {
   training_date: string;
   issue_date: string;
   due_date: string;
+  referred_by?: string;
   status: CertificateStatus;
   attachments?: CertificateAttachment[];
   created_at: string;
@@ -64,4 +65,19 @@ export interface UpdateCertificateRequest {
   issue_date?: string;
   due_date?: string;
   status?: CertificateStatus;
+}
+
+export interface ExportCertificateRequest {
+  name: string
+  nationality: string
+  license: string
+  employer: string
+  course: string
+  trainingDate: string
+  certificateNo: string
+  batchNo: string
+  issueDate: string
+  dueDate: string
+  photoBase64: string
+  format: string
 }

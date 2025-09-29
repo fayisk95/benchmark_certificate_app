@@ -1,8 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { Certificate, CreateCertificateRequest, UpdateCertificateRequest, CertificateStatus } from '../../shared/models/certificate.model';
+import { Certificate, CreateCertificateRequest, UpdateCertificateRequest, CertificateStatus, ExportCertificateRequest } from '../../shared/models/certificate.model';
 import { ApiService } from './api.service';
+import { HttpClient } from '@angular/common/http';
 
 interface CertificatesResponse {
   certificates: Certificate[];
@@ -33,7 +34,7 @@ export class CertificateService {
   private _certificates = signal<Certificate[]>([]);
   certificates = this._certificates.asReadonly();
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private http: HttpClient) { }
 
   loadCertificates(params?: any): Observable<CertificatesResponse> {
     return this.apiService.get<CertificatesResponse>('/certificates', params).pipe(
@@ -91,7 +92,7 @@ export class CertificateService {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('file_type', fileType);
-    
+
     return this.apiService.uploadFile(`/certificates/${certificateId}/attachments`, formData);
   }
 
@@ -115,5 +116,13 @@ export class CertificateService {
       expired: certs.filter(c => c.status === CertificateStatus.EXPIRED).length,
       expiringSoon: certs.filter(c => c.status === CertificateStatus.EXPIRING_SOON).length
     };
+  }
+
+  exportCertificates(certificates: ExportCertificateRequest): Observable<any> {
+    return this.http.post('http://localhost:3000/api/export/generate-certificate', certificates, {
+      responseType: 'blob' as 'blob', // IMPORTANT: tells Angular it's binary
+      observe: 'body'
+    });
+
   }
 }

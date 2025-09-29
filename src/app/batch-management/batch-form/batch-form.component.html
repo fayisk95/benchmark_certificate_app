@@ -1,145 +1,230 @@
 <div class="batch-form-container">
-  <mat-card class="batch-form-card">
-    <mat-card-header>
-      <mat-card-title>{{ title }}</mat-card-title>
-    </mat-card-header>
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>group_work</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>{{ title }}</h1>
+        <p>{{ isEditMode ? 'Update batch information and settings' :
+          'Create a new training batch for certificate issuance' }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-button (click)="cancel()" class="cancel-btn">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+    </div>
+  </div>
 
-    <mat-card-content>
-      <form [formGroup]="batchForm" (ngSubmit)="onSubmit()">
-        <!-- Company Information -->
-        <h3>Company Information</h3>
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Company Name</mat-label>
-            <input matInput formControlName="company_name" placeholder="Enter company name">
-            <mat-error *ngIf="batchForm.get('company_name')?.hasError('required')">
-              Company name is required
-            </mat-error>
-          </mat-form-field>
+  <div class="form-content">
+    <form [formGroup]="batchForm" (ngSubmit)="onSubmit()">
 
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Referred By</mat-label>
-            <input matInput formControlName="referred_by" placeholder="Enter referrer name">
-            <mat-error *ngIf="batchForm.get('referred_by')?.hasError('required')">
-              Referrer name is required
-            </mat-error>
-          </mat-form-field>
+      <!-- Company Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">business</mat-icon>
+          <h2>Company Information</h2>
         </div>
+        <div class="section-content">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Company Name</mat-label>
+              <input matInput formControlName="company_name" required placeholder="Enter company name">
+              <mat-icon matSuffix>business</mat-icon>
+              <mat-error *ngIf="batchForm.get('company_name')?.hasError('required')">
+                Company name is required
+              </mat-error>
+              <mat-error *ngIf="batchForm.get('company_name')?.hasError('minlength')">
+                Company name must be at least 2 characters
+              </mat-error>
+            </mat-form-field>
 
-        <!-- Batch Details -->
-        <h3>Batch Details</h3>
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Number of Participants</mat-label>
-            <input matInput type="number" formControlName="number_of_participants" min="1" max="100">
-            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('required')">
-              Number of participants is required
-            </mat-error>
-            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('min')">
-              At least 1 participant required
-            </mat-error>
-            <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('max')">
-              Maximum 100 participants allowed
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field class="half-width" appearance="outline" *ngIf="canManualOverride">
-            <mat-label>Batch Number (Optional)</mat-label>
-            <input matInput formControlName="batch_number" placeholder="Auto-generated if empty">
-            <mat-hint>Leave empty for auto-generation</mat-hint>
-          </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Referred By</mat-label>
+              <input matInput formControlName="referred_by" required placeholder="Enter referrer name">
+              <mat-icon matSuffix>person_add</mat-icon>
+              <mat-error *ngIf="batchForm.get('referred_by')?.hasError('required')">
+                Referrer name is required
+              </mat-error>
+              <mat-error *ngIf="batchForm.get('referred_by')?.hasError('minlength')">
+                Referrer name must be at least 2 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+      </div>
 
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Batch Type</mat-label>
-            <mat-select formControlName="batch_type">
-              <mat-option *ngFor="let type of batchTypes" [value]="type">
-                {{ type }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Certificate Type</mat-label>
-            <mat-select formControlName="certificate_type">
-              <mat-option *ngFor="let type of certificateTypes" [value]="type">
-                {{ type }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+      <!-- Batch Configuration Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">settings</mat-icon>
+          <h2>Batch Configuration</h2>
         </div>
+        <div class="section-content">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Number of Participants</mat-label>
+              <input matInput type="number" formControlName="number_of_participants" min="1" max="100" required
+                placeholder="Enter participant count">
+              <mat-icon matSuffix>groups</mat-icon>
+              <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('required')">
+                Number of participants is required
+              </mat-error>
+              <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('min')">
+                At least 1 participant required
+              </mat-error>
+              <mat-error *ngIf="batchForm.get('number_of_participants')?.hasError('max')">
+                Maximum 100 participants allowed
+              </mat-error>
+              <mat-hint>Maximum 100 participants per batch</mat-hint>
+            </mat-form-field>
 
-        <!-- Training Schedule -->
-        <h3>Training Schedule</h3>
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startPicker" formControlName="start_date">
-            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
-            <mat-datepicker #startPicker></mat-datepicker>
-            <mat-error *ngIf="batchForm.get('start_date')?.hasError('required')">
-              Start date is required
-            </mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="outline" *ngIf="canManualOverride">
+              <mat-label>Batch Number</mat-label>
+              <input matInput formControlName="batch_number" placeholder="Auto-generated if empty">
+              <mat-icon matSuffix>tag</mat-icon>
+              <mat-hint>Leave empty for auto-generation</mat-hint>
+            </mat-form-field>
 
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endPicker" formControlName="end_date">
-            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker></mat-datepicker>
-            <mat-error *ngIf="batchForm.get('end_date')?.hasError('required')">
-              End date is required
-            </mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Batch Type</mat-label>
+              <mat-select formControlName="batch_type" required>
+                <mat-option *ngFor="let type of storageSvc.getBatchTypes()" [value]="type.misc_code">
+                  <div class="select-option">
+                    <span>{{ type.misc_name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>category</mat-icon>
+              <mat-hint>Choose training delivery method</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Certificate Type</mat-label>
+              <mat-select formControlName="certificate_type" required>
+                <mat-option *ngFor="let type of storageSvc.getCertificateTypes()" [value]="type.misc_code">
+                  <div class="select-option">
+                    <span>{{ type.misc_name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>certificate</mat-icon>
+              <mat-hint>Type of certificate to be issued</mat-hint>
+            </mat-form-field>
+          </div>
         </div>
+      </div>
 
-        <!-- Instructor Assignment -->
-        <h3>Instructor Assignment</h3>
-        <div class="form-row">
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Instructor</mat-label>
-            <mat-select formControlName="instructor_id">
-              <mat-option *ngFor="let instructor of instructors" [value]="instructor.id">
-                {{ instructor.name }} ({{ instructor.email }})
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
-              Please select an instructor
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field class="half-width" appearance="outline">
-            <mat-label>Instructor</mat-label>
-            <mat-select formControlName="training_code">
-              <mat-option *ngFor="let training of certTrainings" [value]="training.misc_code">
-                {{ training.misc_name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
-              Please select an instructor
-            </mat-error>
-          </mat-form-field>
+      <!-- Training Schedule Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">schedule</mat-icon>
+          <h2>Training Schedule</h2>
         </div>
+        <div class="section-content">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startPicker" formControlName="start_date" required>
+              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+              <mat-error *ngIf="batchForm.get('start_date')?.hasError('required')">
+                Start date is required
+              </mat-error>
+              <mat-hint>When training begins</mat-hint>
+            </mat-form-field>
 
-        <!-- Description -->
-        <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endPicker" formControlName="end_date" required>
+              <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+              <mat-error *ngIf="batchForm.get('end_date')?.hasError('required')">
+                End date is required
+              </mat-error>
+              <mat-hint>When training ends</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructor Assignment Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">person</mat-icon>
+          <h2>Instructor & Training Details</h2>
+        </div>
+        <div class="section-content">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Assigned Instructor</mat-label>
+              <mat-select formControlName="instructor_id" required>
+                <mat-option *ngFor="let instructor of instructors" [value]="instructor.id">
+                  <div class="instructor-option">
+                    <div class="instructor-name">{{ instructor.name }}</div>
+                    <div class="instructor-email">{{ instructor.email }}</div>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="batchForm.get('instructor_id')?.hasError('required')">
+                Please select an instructor
+              </mat-error>
+              <mat-hint>Choose the instructor for this batch</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Training Program</mat-label>
+              <mat-select formControlName="training_code">
+                <mat-option *ngFor="let training of storageSvc.getCertTrainings()" [value]="training.misc_code">
+                  <div class="training-option">
+                    <div class="training-code">{{ training.misc_code }}</div>
+                    <div class="training-name">{{ training.misc_name }}</div>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>code</mat-icon>
+              <mat-hint>Select training program code</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">description</mat-icon>
+          <h2>Additional Information</h2>
+        </div>
+        <div class="section-content">
           <mat-form-field class="full-width" appearance="outline">
             <mat-label>Description</mat-label>
             <textarea matInput formControlName="description" rows="4"
-              placeholder="Enter batch description or special notes"></textarea>
+              placeholder="Enter batch description, special notes, or requirements"></textarea>
+            <mat-icon matSuffix>notes</mat-icon>
+            <mat-hint>Optional: Add any special notes or requirements for this batch</mat-hint>
           </mat-form-field>
         </div>
+      </div>
 
-        <div class="form-actions">
-          <button mat-button type="button" (click)="cancel()" [disabled]="isLoading">
-            Cancel
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <div class="actions-left">
+          <button mat-button type="button" (click)="cancel()" class="cancel-button" [disabled]="isLoading">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Batches
           </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="batchForm.invalid || isLoading">
+        </div>
+        <div class="actions-right">
+          <button mat-raised-button color="primary" type="submit" [disabled]="batchForm.invalid || isLoading"
+            class="submit-button">
+            <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
             {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Batch' : 'Create Batch') }}
           </button>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
+    </form>
+  </div>
 </div>

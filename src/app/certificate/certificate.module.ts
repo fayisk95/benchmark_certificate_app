@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -29,6 +30,7 @@ import { MatMenu, MatMenuModule } from "@angular/material/menu";
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule.forChild([
       { path: '', component: CertificateListComponent },
       { path: 'create', component: CertificateFormComponent },
@@ -49,6 +51,6 @@ import { MatMenu, MatMenuModule } from "@angular/material/menu";
     MatDialogModule,
     MatMenu,
     MatMenuModule
-  ]
+  ], providers: [DatePipe]
 })
 export class CertificateModule { }

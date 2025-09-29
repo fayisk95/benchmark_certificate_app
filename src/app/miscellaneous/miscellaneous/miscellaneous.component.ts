@@ -233,6 +233,7 @@ export class MiscellaneousComponent implements OnInit {
   }
 
   getSelectedGroupName(): string {
+    console.log('Getting name for group code:', this.selectedGroupId);
     const group = this.groups.find(g => g.misc_group_code === this.selectedGroupId);
     return group ? group.misc_group_name : '';
   }

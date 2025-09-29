@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate</title>
+    <style>
+        @page {
+            size: 297mm 210mm;
+            /* A4 Landscape */
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Times New Roman';
+            margin: 0;
+            padding: 0;
+            width: 297mm;
+            height: 210mm;
+            box-sizing: border-box;
+            font-size: 16.8px;
+        }
+
+        .certificate-container {
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+            position: relative;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
+            margin-top: 236px;
+        }
+
+        .text-details {
+            flex-grow: 1;
+        }
+
+        .photo-box {
+            width: 100px;
+            height: 120px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            position: absolute;
+            right: 128px;
+            top: 280px;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 8pt;
+        }
+
+        .text-line {
+            margin: 0px;
+            margin-bottom: 8pt;
+            font-size: 14pt;
+        }
+
+        .main-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .training-text {
+            font-size: 14pt;
+            margin: 0px 0 8pt 0;
+        }
+
+        .role {
+            font-size: 28pt;
+            font-weight: bolder;
+            color: #4F81BD;
+            line-height: 1;
+            margin: 0px 0 8pt 0;
+            text-decoration: underline;
+            font-family: 'Britannic';
+        }
+
+        .date-location {
+            font-size: 12pt;
+            margin: 0px 0 8pt 0;
+            /* updated spacing */
+            font-weight: bolder;
+        }
+
+        .footer-details {
+            display: flex;
+            justify-content: center;
+            margin-left: 128px;
+            width: 90%;
+            font-size: 14px !important;
+            z-index: 2;
+        }
+
+        .footer-details div {
+            flex-basis: 35%;
+            text-align: left;
+        }
+
+        .footer-details p {
+            margin: 0px 0 8pt 0;
+            /* updated spacing */
+        }
+
+        .seals-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            bottom: 72px;
+            left: 50%;
+            margin-left: 32px;
+            transform: translateX(-50%);
+            width: 95%;
+            z-index: 2;
+        }
+
+        .iso-logos img,
+        .iso-logos-2 img,
+        .uae-logo-container img,
+        .signature-box img {
+            padding-right: 24px;
+        }
+
+        .label-style {
+            color: #000;
+            font-size: 14px !important;
+            font-weight: normal;
+        }
+
+        .label-style-footer {
+            color: #000;
+            font-size: 14pt !important;
+            font-weight: bold;
+        }
+
+        .data-style {
+            font-weight: bold;
+            margin-left: 5px;
+            font-size: 14pt;
+        }
+
+        .data-style-date {
+            font-size: 14pt;
+            margin-left: 5px;
+            color: #000 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="certificate-container">
+
+        <div class="photo-box">
+            <img src="{{PHOTO_BASE64}}" alt="Recipient Photo" />
+        </div>
+
+        <div class="header">
+            <div class="text-details">
+                <div class="name">{{NAME}}</div>
+                <p class="text-line"><span class="label-style">NATIONALITY:</span><span
+                        class="data-style">{{NATIONALITY}}</span></p>
+                <p class="text-line"><span class="label-style">EID / LICENSE:</span><span
+                        class="data-style">{{EID_LICENSE}}</span></p>
+                <p class="text-line"><span class="label-style">EMPLOYER:</span><span
+                        class="data-style">{{EMPLOYER}}</span></p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <p class="training-text text-line">Has successfully completed one day training on </p>
+            <div class="role text-line">{{TRAINING_TITLE}}</div>
+            <p class="date-location text-line">On {{TRAINING_DATE}} at AD, UAE</p>
+        </div>
+
+        <div class="footer-details text-line">
+            <div>
+                <p><span class="label-style-footer text-line">Certificate No:</span><span class="data-style"
+                        style="color: #FF0000;">{{CERTIFICATE_NO}}</span></p>
+                <p><span class="label-style-footer">Issue Date:</span><span
+                        class="data-style-date">{{ISSUE_DATE}}</span></p>
+            </div>
+            <div>
+                <p><span class="label-style-footer text-line ">Batch No:</span><span class="data-style"
+                        style="color: #FF0000;">{{BATCH_NO}}</span></p>
+                <p><span class="label-style-footer">Due Date:</span><span class="data-style-date">{{DUE_DATE}}</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="seals-section">
+            <div class="iso-logos">
+                <img src="../assets/iso9001.png" alt="ISO 9001" width="240.4px" height="82.56px" />
+            </div>
+            <div class="iso-logos-2">
+                <img src="../assets/ded_logo.png" alt="DED Logo" width="194.88px" />
+            </div>
+            <div class="uae-logo-container">
+                <img src="../assets/iso45001.png" alt="ISO 45001" width="151.68px" />
+            </div>
+            <div class="signature-box">
+                <img src="../assets/sara_signature.png" alt="Signature" width="144.96px" />
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

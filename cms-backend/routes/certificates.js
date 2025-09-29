@@ -148,7 +148,7 @@ router.get('/', authenticateToken, requirePermission('issue-certificates'), asyn
 
     // Get certificates with batch info
     const [rows] = await db.execute(
-      `SELECT c.*, b.batch_number, b.company_name
+      `SELECT c.*, b.batch_number, b.company_name, b.referred_by
        FROM certificates c 
        LEFT JOIN batches b ON c.batch_id = b.id 
        ${whereClause}
@@ -207,7 +207,7 @@ router.get('/:id', authenticateToken, requirePermission('issue-certificates'), a
     const { id } = req.params;
 
     const [rows] = await db.execute(
-      `SELECT c.*, b.batch_number, b.company_name
+      `SELECT c.*, b.batch_number, b.company_name, b.referred_by
        FROM certificates c 
        LEFT JOIN batches b ON c.batch_id = b.id 
        WHERE c.id = ?`,

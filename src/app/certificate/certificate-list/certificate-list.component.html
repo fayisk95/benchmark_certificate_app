@@ -117,9 +117,13 @@
                   <mat-icon>visibility</mat-icon>
                   <span>Preview</span>
                 </button>
-                <button mat-menu-item (click)="exportToPdf(certificate)">
+                <button mat-menu-item (click)="exportToPdf(certificate, 'pdf')">
                   <mat-icon>picture_as_pdf</mat-icon>
                   <span>Export PDF</span>
+                </button>
+                <button mat-menu-item (click)="exportToPdf(certificate, 'docx')">
+                  <mat-icon>description</mat-icon>
+                  <span>Export Word</span>
                 </button>
               </mat-menu>
             </td>
