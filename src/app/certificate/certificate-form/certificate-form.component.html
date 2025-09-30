@@ -175,6 +175,198 @@
         </div>
       </div>
 
+      <!-- File Uploads Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">attach_file</mat-icon>
+          <h2>Document Uploads</h2>
+        </div>
+        <div class="section-content">
+          <!-- Person Photo (Mandatory) -->
+          <div class="upload-section mandatory-section">
+            <div class="upload-card mandatory-card">
+              <div class="upload-card-header">
+                <div class="upload-icon-wrapper mandatory-icon">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="upload-title-section">
+                  <h3>Person Photo <span class="required-badge">Required</span></h3>
+                  <p>Upload a clear photo of the certificate holder</p>
+                </div>
+              </div>
+
+              <div class="upload-zone" [class.has-file]="hasFile('photo')" [class.mandatory-zone]="true">
+                <input type="file" id="photo-input" accept="image/jpeg,image/jpg,image/png"
+                  (change)="onFileSelected($event, 'photo')" style="display: none;">
+
+                <div *ngIf="!hasFile('photo')" class="upload-dropzone" (click)="selectFile('photo-input')">
+                  <div class="upload-icon-large">
+                    <mat-icon>cloud_upload</mat-icon>
+                  </div>
+                  <div class="upload-text">
+                    <span class="upload-primary">Click to upload photo</span>
+                    <span class="upload-secondary">or drag and drop</span>
+                  </div>
+                  <div class="upload-formats">JPEG, JPG, PNG • Max 5MB</div>
+                </div>
+
+                <div *ngIf="hasFile('photo')" class="file-preview-card">
+                  <div class="preview-image-container">
+                    <img *ngIf="filePreviewUrls['photo']" [src]="filePreviewUrls['photo']" alt="Photo preview"
+                      class="preview-image">
+                  </div>
+                  <div class="file-details">
+                    <div class="file-name">{{ getFileName('photo') }}</div>
+                    <div class="file-size">{{ getFileSize('photo') }}</div>
+                    <button mat-icon-button (click)="removeFile('photo')" class="remove-file-btn" type="button">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional Documents -->
+          <div class="upload-section optional-section">
+            <div class="optional-header">
+              <h3>Optional Documents</h3>
+              <p>Upload additional documents for record keeping (all optional)</p>
+            </div>
+
+            <div class="optional-uploads-grid">
+              <!-- Emirates ID -->
+              <div class="upload-card optional-card">
+                <div class="upload-card-header">
+                  <div class="upload-icon-wrapper optional-icon">
+                    <mat-icon>credit_card</mat-icon>
+                  </div>
+                  <div class="upload-title-section">
+                    <h4>Emirates ID</h4>
+                    <p>Identity document</p>
+                  </div>
+                </div>
+
+                <div class="upload-zone compact" [class.has-file]="hasFile('eid')">
+                  <input type="file" id="eid-input" accept="image/jpeg,image/jpg,image/png,application/pdf"
+                    (change)="onFileSelected($event, 'eid')" style="display: none;">
+
+                  <div *ngIf="!hasFile('eid')" class="upload-dropzone compact" (click)="selectFile('eid-input')">
+                    <mat-icon class="upload-icon-small">cloud_upload</mat-icon>
+                    <span class="upload-text-small">Upload EID</span>
+                  </div>
+
+                  <div *ngIf="hasFile('eid')" class="file-preview-compact">
+                    <div class="file-icon-container">
+                      <img *ngIf="filePreviewUrls['eid']" [src]="filePreviewUrls['eid']" alt="EID preview"
+                        class="preview-thumbnail">
+                      <mat-icon *ngIf="!filePreviewUrls['eid']" class="file-type-icon">description</mat-icon>
+                    </div>
+                    <div class="file-info-compact">
+                      <div class="file-name-compact">{{ getFileName('eid') }}</div>
+                      <button mat-icon-button (click)="removeFile('eid')" class="remove-compact-btn" type="button">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Driving License -->
+              <div class="upload-card optional-card">
+                <div class="upload-card-header">
+                  <div class="upload-icon-wrapper optional-icon">
+                    <mat-icon>drive_eta</mat-icon>
+                  </div>
+                  <div class="upload-title-section">
+                    <h4>Driving License</h4>
+                    <p>License document</p>
+                  </div>
+                </div>
+
+                <div class="upload-zone compact" [class.has-file]="hasFile('license')">
+                  <input type="file" id="license-input" accept="image/jpeg,image/jpg,image/png,application/pdf"
+                    (change)="onFileSelected($event, 'license')" style="display: none;">
+
+                  <div *ngIf="!hasFile('license')" class="upload-dropzone compact"
+                    (click)="selectFile('license-input')">
+                    <mat-icon class="upload-icon-small">cloud_upload</mat-icon>
+                    <span class="upload-text-small">Upload License</span>
+                  </div>
+
+                  <div *ngIf="hasFile('license')" class="file-preview-compact">
+                    <div class="file-icon-container">
+                      <img *ngIf="filePreviewUrls['license']" [src]="filePreviewUrls['license']" alt="License preview"
+                        class="preview-thumbnail">
+                      <mat-icon *ngIf="!filePreviewUrls['license']" class="file-type-icon">description</mat-icon>
+                    </div>
+                    <div class="file-info-compact">
+                      <div class="file-name-compact">{{ getFileName('license') }}</div>
+                      <button mat-icon-button (click)="removeFile('license')" class="remove-compact-btn" type="button">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signed Certificate -->
+              <div class="upload-card optional-card">
+                <div class="upload-card-header">
+                  <div class="upload-icon-wrapper optional-icon">
+                    <mat-icon>fact_check</mat-icon>
+                  </div>
+                  <div class="upload-title-section">
+                    <h4>Signed Certificate</h4>
+                    <p>Completed document</p>
+                  </div>
+                </div>
+
+                <div class="upload-zone compact" [class.has-file]="hasFile('signed')">
+                  <input type="file" id="signed-input" accept="image/jpeg,image/jpg,image/png,application/pdf"
+                    (change)="onFileSelected($event, 'signed')" style="display: none;">
+
+                  <div *ngIf="!hasFile('signed')" class="upload-dropzone compact" (click)="selectFile('signed-input')">
+                    <mat-icon class="upload-icon-small">cloud_upload</mat-icon>
+                    <span class="upload-text-small">Upload Document</span>
+                  </div>
+
+                  <div *ngIf="hasFile('signed')" class="file-preview-compact">
+                    <div class="file-icon-container">
+                      <img *ngIf="filePreviewUrls['signed']" [src]="filePreviewUrls['signed']"
+                        alt="Signed document preview" class="preview-thumbnail">
+                      <mat-icon *ngIf="!filePreviewUrls['signed']" class="file-type-icon">description</mat-icon>
+                    </div>
+                    <div class="file-info-compact">
+                      <div class="file-name-compact">{{ getFileName('signed') }}</div>
+                      <button mat-icon-button (click)="removeFile('signed')" class="remove-compact-btn" type="button">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Guidelines -->
+          <div class="upload-guidelines">
+            <div class="guidelines-card">
+              <mat-icon class="guidelines-icon">info</mat-icon>
+              <div class="guidelines-content">
+                <h4>Upload Guidelines</h4>
+                <ul>
+                  <li><strong>Person Photo:</strong> Required for certificate generation</li>
+                  <li><strong>File Formats:</strong> JPEG, JPG, PNG, PDF</li>
+                  <li><strong>File Size:</strong> Maximum 5MB per file</li>
+                  <li><strong>Quality:</strong> Ensure documents are clear and readable</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Form Actions -->
       <div class="form-actions">
         <div class="actions-left">
@@ -187,7 +379,8 @@
           <button mat-raised-button color="primary" type="submit" [disabled]="certificateForm.invalid || isLoading"
             class="submit-button">
             <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
-            {{ isLoading ? 'Saving...' : (isEdit ? 'Update Certificate' : 'Create Certificate') }}
+            {{ isLoading ? (uploadingFiles ? 'Uploading files...' : 'Saving...') : (isEdit ? 'Update Certificate' :
+            'Create Certificate') }}
           </button>
         </div>
       </div>

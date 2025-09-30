@@ -433,8 +433,7 @@ router.post('/:id/attachments', authenticateToken, requirePermission('issue-cert
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-
-    if (!file_type || !['EID', 'Driving License', 'Signed Certificate'].includes(file_type)) {
+    if (!file_type || !['EID', 'Driving License', 'Signed Certificate', 'USER_PHOTO'].includes(file_type)) {
       return res.status(400).json({ error: 'Invalid file type' });
     }
 

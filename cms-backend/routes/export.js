@@ -15,9 +15,19 @@ const DOCX_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'certificate.doc
 const HTML_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'certificate.html');
 
 // DOCX Image Options
-const DOCX_IMAGE_OPTIONS = {
-    getImage: tagValue => Buffer.from(tagValue, 'base64'),
-    getSize: (img, tagValue, initialDimensions) => [100, 120] // Adjust as needed
+const imageOpts = {
+    centered: false,
+    getImage(tagValue) {
+        if (!tagValue) return Buffer.alloc(0);
+        if (tagValue.startsWith('data:image')) {
+            return Buffer.from(tagValue.split(',')[1], 'base64');
+        }
+        if (Buffer.isBuffer(tagValue)) return tagValue;
+        return Buffer.from(tagValue, 'base64');
+    },
+    getSize(img, tagValue, tagName) {
+        return [120, 120];
+    }
 };
 
 // Prepare certificate data
@@ -28,7 +38,8 @@ const getCertificateData = body => {
     } else if (body.photoBase64) {
         photoBase64 = body.photoBase64;
     }
-
+    console.log('Photo base64 length:', photoBase64.length);
+    console.log('Photo base64 length:', photoBase64.length);
     return {
         NAME: body.name || '',
         NATIONALITY: body.nationality || '',
@@ -46,15 +57,24 @@ const getCertificateData = body => {
 
 // Generate DOCX
 async function generateDocx(data) {
-    if (!fs.existsSync(DOCX_TEMPLATE_PATH)) throw new Error("DOCX template missing.");
+    if (!fs.existsSync(DOCX_TEMPLATE_PATH)) throw new Error('DOCX template not found');
 
     const content = fs.readFileSync(DOCX_TEMPLATE_PATH, 'binary');
     const zip = new PizZip(content);
-    const imageModule = new ImageModule(DOCX_IMAGE_OPTIONS);
 
-    const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true, modules: [imageModule] });
-    const docxData = { ...data, PHOTO_KEY: data.PHOTO_BASE64 };
-    doc.render(docxData);
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+        modules: [new ImageModule(imageOpts)]
+    });
+
+    try {
+        doc.render(data);
+    } catch (err) {
+        // More descriptive error
+        const errorMessages = err.properties?.errors?.map(e => e.explanation).join('; ') || err.message;
+        throw new Error(`DOCX rendering failed: ${errorMessages}`);
+    }
 
     return doc.getZip().generate({ type: 'nodebuffer', compression: 'DEFLATE' });
 }
@@ -93,7 +113,7 @@ async function generatePdf(data) {
 // API route
 router.post('/generate-certificate', async (req, res) => {
     const { format, imagePath, ...dataBody } = req.body;
-    const absoluteImagePath = imagePath ? path.resolve(__dirname, imagePath) : null;
+    const absoluteImagePath = imagePath ? path.resolve(__dirname, '../', imagePath) : null;
 
     const certificateData = getCertificateData({ ...dataBody, imagePath: absoluteImagePath });
     const formattedData = Object.fromEntries(Object.entries(certificateData).map(([k, v]) => [k.toUpperCase(), v]));

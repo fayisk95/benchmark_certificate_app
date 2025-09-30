@@ -38,7 +38,8 @@ export interface CertificateAttachment {
 export enum AttachmentType {
   EID = 'EID',
   DRIVING_LICENSE = 'Driving License',
-  SIGNED_CERTIFICATE = 'Signed Certificate'
+  SIGNED_CERTIFICATE = 'Signed Certificate',
+  USER_PHOTO = "USER_PHOTO"
 }
 
 export interface CreateCertificateRequest {
@@ -78,6 +79,6 @@ export interface ExportCertificateRequest {
   batchNo: string
   issueDate: string
   dueDate: string
-  photoBase64: string
+  imagePath: string
   format: string
 }

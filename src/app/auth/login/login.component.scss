@@ -24,14 +24,16 @@
   .logo-container {
     text-align: center;
     margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     
-    .logo-icon {
-      font-size: 56px;
-      width: 56px;
-      height: 56px;
-      color: var(--primary-color);
+    .company-logo {
+      height: 60px;
+      width: auto;
       margin-bottom: 16px;
-      display: block;
+      object-fit: contain;
     }
     
     .company-title {
@@ -41,6 +43,7 @@
       font-size: 1.75rem;
       font-family: 'Inter', sans-serif;
       line-height: 1.3;
+      text-align: center;
     }
   }
   
@@ -122,6 +125,34 @@
     border-radius: var(--border-radius);
     font-family: 'Inter', sans-serif;
     font-weight: 500;
+  }
+  
+  .powered-by {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+    
+    .powered-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .brandbytes-logo {
+      height: 20px;
+      width: auto;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
   
   .demo-credentials {
