@@ -20,6 +20,7 @@ export interface ApiResponse<T> {
   providedIn: 'root'
 })
 export class ApiService {
+
   private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
@@ -103,6 +104,23 @@ export class ApiService {
 
     return this.http.post<T>(`${this.baseUrl}${endpoint}`, formData, {
       headers
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getFile(endpoint: string): Observable<Blob> {
+    const token = localStorage.getItem('authToken');
+    let headers = new HttpHeaders();
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return this.http.get<Blob>(`${this.baseUrl}${endpoint}`, {
+      headers,
+      responseType: 'blob' as 'json',
+      observe: 'body'
     }).pipe(
       catchError(this.handleError)
     );

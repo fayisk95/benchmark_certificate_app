@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Batch, BatchType, CertificateType } from '../../shared/models/batch.model';
 import { BatchService } from '../../core/services/batch.service';
+import { StorageService } from '../../shared/services/storage.service';
 
 @Component({
   standalone: false,
@@ -28,8 +29,12 @@ export class BatchListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private batchService: BatchService
-  ) { }
+    private batchService: BatchService,
+    public storageSvc: StorageService
+  ) {
+    storageSvc.loadBatchTypes();
+    storageSvc.loadCertificateTypes();
+  }
 
   ngOnInit(): void {
     this.loadBatches();

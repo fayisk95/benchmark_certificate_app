@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, tap, map, finalize } from 'rxjs/operators';
 import { ApiService } from '../../core/services/api.service';
 import { User, UserRole, LoginRequest, LoginResponse } from '../models/user.model';
+import { LoadingService } from './loading.service';
+import { NotificationService } from './notification.service';
 
 interface ProfileResponse {
   user: User;
@@ -18,7 +20,9 @@ export class AuthService {
 
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService,
+    private notificationService: NotificationService
   ) {
     this.initializeAuth();
   }
@@ -40,18 +44,23 @@ export class AuthService {
 
   login(email: string, password: string): Observable<User | null> {
     const loginData: LoginRequest = { email, password };
+    this.loadingService.show();
 
     return this.apiService.post<LoginResponse>('/auth/login', loginData).pipe(
       tap(response => {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('currentUser', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
+        this.notificationService.success('Login successful');
       }),
       map(response => response.user),
       catchError((error) => {
         console.error('Login error:', error);
+        const errorMessage = error.error?.message || 'Login failed. Please check your credentials.';
+        this.notificationService.error(errorMessage);
         return of(null);
-      })
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
@@ -103,18 +112,37 @@ export class AuthService {
   }
 
   updateProfile(profileData: Partial<User>): Observable<ProfileResponse> {
+    this.loadingService.show();
     return this.apiService.put<ProfileResponse>('/auth/profile', profileData).pipe(
       tap(response => {
         localStorage.setItem('currentUser', JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
-      })
+        this.notificationService.success('Profile updated successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to update profile';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    this.loadingService.show();
     return this.apiService.put('/auth/change-password', {
       currentPassword,
       newPassword
-    });
+    }).pipe(
+      tap(() => {
+        this.notificationService.success('Password changed successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to change password';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 }

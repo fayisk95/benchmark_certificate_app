@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Certificate, CertificateStatus, AttachmentType, ExportCertificateRequest } from '../../shared/models/certificate.model';
-// import { Certificate, CreateCertificateRequest, UpdateCertificateRequest, CertificateStatus, ExportCertificateRequest } from '../../shared/models/certificate.model';
 import { CertificateService } from '../../core/services/certificate.service';
 import { BatchService } from '../../core/services/batch.service';
 import { Batch } from '../../shared/models/batch.model';
 import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
+import { NotificationService } from '../../shared/services/notification.service';
+import { LoadingService } from '../../shared/services/loading.service';
 
 @Component({
   standalone: false,
@@ -34,7 +35,9 @@ export class CertificateListComponent implements OnInit {
     private router: Router,
     private certificateService: CertificateService,
     private batchService: BatchService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private notificationService: NotificationService,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit(): void {
@@ -183,14 +186,14 @@ export class CertificateListComponent implements OnInit {
   }
   exportToWord(certificate: Certificate): void {
     if (this.filteredCertificates.length === 0) {
-      alert('No certificates to export');
+      this.notificationService.warning('No certificates to export');
       return;
     }
   }
 
   exportToExcel(): void {
     if (this.filteredCertificates.length === 0) {
-      alert('No certificates to export');
+      this.notificationService.warning('No certificates to export');
       return;
     }
 
@@ -198,8 +201,6 @@ export class CertificateListComponent implements OnInit {
     const exportData = this.filteredCertificates.map(cert => ({
       'Certificate Number': cert.certificate_number,
       'Name': cert.name,
-      'Nationality': cert.nationality,
-      'EID/License': cert.eid_license,
       'Employer': cert.employer,
       'Training Name': cert.training_name,
       'Training Date': this.formatDateForExcel(cert.training_date),
@@ -207,7 +208,6 @@ export class CertificateListComponent implements OnInit {
       'Due Date': this.formatDateForExcel(cert.due_date),
       'Status': cert.status,
       'Batch Number': cert.batch_number || '',
-      'Company': cert.company_name || '',
       'Referred By': cert.referred_by || '',
       'Created Date': this.formatDateForExcel(cert.created_at)
     }));
@@ -220,8 +220,6 @@ export class CertificateListComponent implements OnInit {
     const colWidths = [
       { wch: 20 }, // Certificate Number
       { wch: 25 }, // Name
-      { wch: 15 }, // Nationality
-      { wch: 20 }, // EID/License
       { wch: 30 }, // Employer
       { wch: 30 }, // Training Name
       { wch: 15 }, // Training Date
@@ -229,7 +227,6 @@ export class CertificateListComponent implements OnInit {
       { wch: 15 }, // Due Date
       { wch: 15 }, // Status
       { wch: 20 }, // Batch Number
-      { wch: 30 }, // Company
       { wch: 15 }  // Created Date
     ];
     ws['!cols'] = colWidths;
@@ -237,12 +234,29 @@ export class CertificateListComponent implements OnInit {
     // Add worksheet to workbook
     XLSX.utils.book_append_sheet(wb, ws, 'Certificates');
 
-    // Generate filename with current date
+    // Generate filename with current date and filter info
     const currentDate = new Date().toISOString().split('T')[0];
-    const filename = `certificates_export_${currentDate}.xlsx`;
+    let filename = `certificates_${currentDate}`;
+
+    if (this.statusFilter) {
+      filename += `_${this.statusFilter.toLowerCase()}`;
+    }
+    if (this.batchFilter) {
+      const batch = this.batches.find(b => b.id.toString() === this.batchFilter);
+      if (batch) {
+        filename += `_batch_${batch.batch_number}`;
+      }
+    }
+    if (this.dateFromFilter || this.dateToFilter) {
+      filename += '_filtered';
+    }
+
+    filename += '.xlsx';
 
     // Save file
     XLSX.writeFile(wb, filename);
+
+    this.notificationService.success(`Exported ${this.filteredCertificates.length} certificates to Excel`);
   }
 
   private formatDateForExcel(dateString: string): string {
@@ -262,9 +276,31 @@ export class CertificateListComponent implements OnInit {
   downloadAttachment(certificate: Certificate, type: AttachmentType): void {
     const attachment = certificate.attachments?.find(att => att.file_type === type);
     if (attachment) {
-      // TODO: Implement attachment download
-      const url = `${window.location.origin}/${attachment.file_path}`;
-      window.open(url, '_blank');
+      this.certificateService.downloadFile(attachment.file_path).subscribe({
+        next: (blob) => {
+          var filename = certificate.batch_number ? certificate.batch_number.replace(/\s+/g, '_').toLowerCase() + '_' : '';
+          filename += certificate.name.replace(/\s+/g, '_').toLowerCase();
+          filename += type === AttachmentType.USER_PHOTO ? '_photo' :
+            type === AttachmentType.EID ? '_eid' :
+              type === AttachmentType.DRIVING_LICENSE ? '_driving_license' :
+                type === AttachmentType.SIGNED_CERTIFICATE ? '_signed_certificate' : '';
+          const cer = filename + attachment.file_name.substring(attachment.file_name.lastIndexOf('.'));
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = cer;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          this.loadingService.hide();
+          this.notificationService.success('File downloaded successfully');
+
+        },
+        error: (error) => {
+          this.loadingService.hide();
+          console.error('Error downloading file:', error);
+          this.notificationService.error('Failed to download file');
+        }
+      });
     }
   }
 }

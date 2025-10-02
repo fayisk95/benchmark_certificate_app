@@ -200,7 +200,28 @@ router.get('/', authenticateToken, requirePermission('issue-certificates'), asyn
     res.status(500).json({ error: 'Failed to fetch certificates' });
   }
 });
+router.get('/download/', (req, res) => {
+  console.log('Download request received:', req.query);
+  const fileParam = req.query.file; // pass relative path from frontend
+  if (!fileParam) {
+    return res.status(400).json({ message: 'File parameter is required' });
+  }
 
+  // Resolve path safely (prevents directory traversal attacks)
+  const filePath = path.join(__dirname, '..', fileParam);
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ message: 'File not found' });
+  }
+
+  // Force browser to download instead of preview
+  res.download(filePath, path.basename(filePath), (err) => {
+    if (err) {
+      console.error('Download error:', err);
+      res.status(500).json({ message: 'Error downloading file' });
+    }
+  });
+});
 // Get certificate by ID
 router.get('/:id', authenticateToken, requirePermission('issue-certificates'), async (req, res) => {
   try {
@@ -496,6 +517,7 @@ router.post('/:id/attachments', authenticateToken, requirePermission('issue-cert
     res.status(500).json({ error: 'Failed to upload attachment' });
   }
 });
+
 
 // Delete attachment
 router.delete('/:id/attachments/:attachmentId', authenticateToken, requirePermission('issue-certificates'), async (req, res) => {

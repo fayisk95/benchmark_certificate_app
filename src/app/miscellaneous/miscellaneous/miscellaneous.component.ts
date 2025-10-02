@@ -4,6 +4,7 @@ import { MiscellaneousService } from '../services/miscellaneous.service';
 import { CreateGroupRequest, MiscellaneousGroup, UpdateGroupRequest } from '../models/miscellaneous.model';
 import { GroupFormDialogComponent } from '../dialogs/group-form-dialog.component';
 import { RecordFormDialogComponent } from '../dialogs/record-form-dialog.component';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   standalone: false,
@@ -25,7 +26,8 @@ export class MiscellaneousComponent implements OnInit {
 
   constructor(
     private miscellaneousService: MiscellaneousService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -135,7 +137,9 @@ export class MiscellaneousComponent implements OnInit {
   }
 
   deleteGroup(group: MiscellaneousGroup): void {
-    if (confirm(`Are you sure you want to delete the group "${group.misc_group_name}"? This will also delete all records in this group.`)) {
+    this.notificationService.warning(`Deleting group "${group.misc_group_name}" will remove all records. This action cannot be undone.`);
+    const shouldDelete = false;
+    if (shouldDelete) {
       this.miscellaneousService.deleteGroup(group.misc_group_code.toString()).subscribe({
         next: () => {
           this.loadGroups();
@@ -208,7 +212,9 @@ export class MiscellaneousComponent implements OnInit {
   }
 
   deleteRecord(record: MiscellaneousGroup): void {
-    if (confirm(`Are you sure you want to delete the record "${record.misc_name}"?`)) {
+    this.notificationService.warning(`Delete record "${record.misc_name}"? This action cannot be undone.`);
+    const shouldDelete = false;
+    if (shouldDelete) {
       this.miscellaneousService.deleteRecord(record.id.toString()).subscribe({
         next: () => {
           this.loadRecordsForGroup(record.misc_group_code);

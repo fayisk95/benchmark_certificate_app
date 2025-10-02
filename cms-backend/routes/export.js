@@ -3,12 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const PizZip = require("pizzip");
 const puppeteer = require('puppeteer');
-const ImageModule = require('docxtemplater-image-module');
 const Docxtemplater = require("docxtemplater");
-const libre = require("libreoffice-convert"); // for DOCX → PDF
-const util = require("util");
-
-const libreConvert = util.promisify(libre.convert);
+const ImageModule = require('docxtemplater-image-module-free');
 
 const router = express.Router();
 const DOCX_TEMPLATE_PATH = path.resolve(__dirname, 'templates', 'certificate.docx');
@@ -26,7 +22,7 @@ const imageOpts = {
         return Buffer.from(tagValue, 'base64');
     },
     getSize(img, tagValue, tagName) {
-        return [120, 120];
+        return [100, 100];
     }
 };
 

@@ -35,7 +35,7 @@
 
       <div class="table-container">
         <table mat-table [dataSource]="filteredBatches" class="batch-table">
-          
+
           <ng-container matColumnDef="batch_number">
             <th mat-header-cell *matHeaderCellDef>Batch Number</th>
             <td mat-cell *matCellDef="let batch">
@@ -62,7 +62,7 @@
             <th mat-header-cell *matHeaderCellDef>Type</th>
             <td mat-cell *matCellDef="let batch">
               <mat-chip [class]="'type-chip type-' + batch.batch_type.toLowerCase()">
-                {{ batch.batch_type }}
+                {{ storageSvc.getBatchTypeNameById(batch.batch_type) }}
               </mat-chip>
             </td>
           </ng-container>
@@ -71,7 +71,7 @@
             <th mat-header-cell *matHeaderCellDef>Certificate</th>
             <td mat-cell *matCellDef="let batch">
               <mat-chip [class]="'cert-chip cert-' + getCertificateClass(batch.certificate_type)">
-                {{ batch.certificate_type }}
+                {{ storageSvc.getCertificateTypeNameById(batch.certificate_type) }}
               </mat-chip>
             </td>
           </ng-container>

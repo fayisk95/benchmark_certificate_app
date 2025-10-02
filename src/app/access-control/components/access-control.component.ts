@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { PERMISSIONS } from '../../core/models/permission.model';
 import { AccessControlService } from '../services/access-control.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   standalone: false,
@@ -10,6 +11,7 @@ import { AccessControlService } from '../services/access-control.service';
 })
 export class AccessControlComponent implements OnInit {
   private accessControlService = inject(AccessControlService);
+  private notificationService = inject(NotificationService);
 
   roles = ['Admin', 'Supervisor', 'Instructor', 'Staff'];
   permissions = Object.values(PERMISSIONS);
@@ -31,13 +33,10 @@ export class AccessControlComponent implements OnInit {
 
   saveChanges() {
     this.accessControlService.saveRolePermissions();
-    alert('Permissions updated successfully!');
   }
 
   resetToDefaults() {
-    if (confirm('Are you sure you want to reset all permissions to default values?')) {
-      this.accessControlService.resetToDefaults();
-    }
+    this.notificationService.warning('Reset functionality will clear all custom permissions. Contact administrator to proceed.');
   }
 
   getPermissionDescription(permission: string): string {

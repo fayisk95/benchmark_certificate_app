@@ -9,6 +9,7 @@ import { AuthService } from '../../shared/services/auth.service';
 import { MiscellaneousGroup } from '../../miscellaneous/models/miscellaneous.model';
 import { MiscellaneousService } from '../../miscellaneous/services/miscellaneous.service';
 import { StorageService } from '../../shared/services/storage.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   standalone: false,
@@ -37,7 +38,8 @@ export class BatchFormComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    public storageSvc: StorageService
+    public storageSvc: StorageService,
+    private notificationService: NotificationService
   ) {
     storageSvc.loadCertTrainings();
     storageSvc.loadBatchTypes();
@@ -137,7 +139,7 @@ export class BatchFormComponent implements OnInit {
 
       // Validate date range
       if (new Date(formValue.start_date) > new Date(formValue.end_date)) {
-        alert('End date must be after start date!');
+        this.notificationService.error('End date must be after start date!');
         this.isLoading = false;
         return;
       }
@@ -163,7 +165,6 @@ export class BatchFormComponent implements OnInit {
             },
             error: (error) => {
               console.error('Error updating batch:', error);
-              alert('An error occurred while updating the batch.');
               this.isLoading = false;
             }
           });
@@ -192,7 +193,6 @@ export class BatchFormComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error creating batch:', error);
-            alert('An error occurred while creating the batch.');
             this.isLoading = false;
           }
         });

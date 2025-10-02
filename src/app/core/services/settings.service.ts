@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap, catchError, finalize } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import { LoadingService } from '../../shared/services/loading.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 export interface AppSettings {
   [key: string]: {
@@ -28,10 +31,21 @@ export interface RolePermissionsResponse {
   providedIn: 'root'
 })
 export class SettingsService {
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private loadingService: LoadingService,
+    private notificationService: NotificationService
+  ) {}
 
   getSettings(): Observable<SettingsResponse> {
-    return this.apiService.get<SettingsResponse>('/settings');
+    this.loadingService.show();
+    return this.apiService.get<SettingsResponse>('/settings').pipe(
+      catchError((error) => {
+        this.notificationService.error('Failed to load settings');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   getSetting(key: string): Observable<any> {
@@ -39,7 +53,18 @@ export class SettingsService {
   }
 
   updateSettings(settings: any): Observable<SettingsResponse> {
-    return this.apiService.put<SettingsResponse>('/settings', { settings });
+    this.loadingService.show();
+    return this.apiService.put<SettingsResponse>('/settings', { settings }).pipe(
+      tap(() => {
+        this.notificationService.success('Settings updated successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to update settings';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   resetSettings(): Observable<SettingsResponse> {
@@ -47,11 +72,29 @@ export class SettingsService {
   }
 
   getRolePermissions(): Observable<RolePermissionsResponse> {
-    return this.apiService.get<RolePermissionsResponse>('/settings/permissions/roles');
+    this.loadingService.show();
+    return this.apiService.get<RolePermissionsResponse>('/settings/permissions/roles').pipe(
+      catchError((error) => {
+        this.notificationService.error('Failed to load role permissions');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   updateRolePermissions(rolePermissions: RolePermissions): Observable<RolePermissionsResponse> {
-    return this.apiService.put<RolePermissionsResponse>('/settings/permissions/roles', { rolePermissions });
+    this.loadingService.show();
+    return this.apiService.put<RolePermissionsResponse>('/settings/permissions/roles', { rolePermissions }).pipe(
+      tap(() => {
+        this.notificationService.success('Role permissions updated successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to update role permissions';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   resetRolePermissions(): Observable<RolePermissionsResponse> {

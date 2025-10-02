@@ -10,6 +10,7 @@ import { MiscellaneousGroup } from '../../miscellaneous/models/miscellaneous.mod
 import { MiscellaneousService } from '../../miscellaneous/services/miscellaneous.service';
 import { StorageService } from '../../shared/services/storage.service';
 import { AttachmentType } from '../../shared/models/certificate.model';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   standalone: false,
@@ -56,7 +57,8 @@ export class CertificateFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private storageSvc: StorageService
+    private storageSvc: StorageService,
+    private notificationService: NotificationService
   ) {
     storageSvc.loadCertTrainings(); // Ensure trainings are loaded
 
@@ -122,6 +124,31 @@ export class CertificateFormComponent implements OnInit {
             due_date: certificate.due_date,
             certificate_number: certificate.certificate_number
           });
+          if (certificate.attachments && certificate.attachments.length > 0) {
+            certificate.attachments.forEach(att => {
+              let fileTypeKey: string | null = null;
+              switch (att.file_type) {
+                case AttachmentType.USER_PHOTO:
+                  fileTypeKey = 'photo';
+                  break;
+                case AttachmentType.EID:
+                  fileTypeKey = 'eid';
+                  break;
+                case AttachmentType.DRIVING_LICENSE:
+                  fileTypeKey = 'license';
+                  break;
+                case AttachmentType.SIGNED_CERTIFICATE:
+                  fileTypeKey = 'signed';
+                  break;
+                default:
+                  break;
+              }
+              if (fileTypeKey) {
+                this.filePreviewUrls[fileTypeKey] = att.file_path;
+                this.selectedFiles[fileTypeKey] = null; // No new file selected yet
+              }
+            });
+          }
         },
         error: (error) => {
           console.error('Error loading certificate:', error);
@@ -142,13 +169,13 @@ export class CertificateFormComponent implements OnInit {
         const typeMessage = fileType === 'photo'
           ? 'Please select a valid image file (JPEG, JPG, PNG)'
           : 'Please select a valid file type (JPEG, JPG, PNG, or PDF)';
-        alert(typeMessage);
+        this.notificationService.error(typeMessage);
         return;
       }
 
       // Validate file size (5MB max)
       if (file.size > this.maxFileSize) {
-        alert('File size must be less than 5MB');
+        this.notificationService.error('File size must be less than 5MB');
         return;
       }
 
@@ -196,7 +223,17 @@ export class CertificateFormComponent implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
   hasFile(fileType: string): boolean {
-    return !!this.selectedFiles[fileType];
+    // true if user selected a new file
+    if (this.selectedFiles[fileType]) {
+      return true;
+    }
+
+    // true if an existing file (from DB) is already attached
+    if (this.filePreviewUrls[fileType]) {
+      return true;
+    }
+
+    return false;
   }
 
   private async uploadAttachments(certificateId: string): Promise<boolean> {
@@ -257,7 +294,7 @@ export class CertificateFormComponent implements OnInit {
 
   private validateMandatoryUploads(): boolean {
     if (!this.selectedFiles['photo']) {
-      alert('Person photo is required. Please upload a photo before submitting.');
+      this.notificationService.error('Person photo is required. Please upload a photo before submitting.');
       return false;
     }
     return true;
@@ -293,13 +330,12 @@ export class CertificateFormComponent implements OnInit {
             if (uploadSuccess) {
               this.router.navigate(['/dashboard/certificates']);
             } else {
-              alert('Certificate updated but some files failed to upload. Please try uploading them again.');
+              this.notificationService.warning('Certificate updated but some files failed to upload. Please try uploading them again.');
               this.isLoading = false;
             }
           },
           error: (error) => {
             console.error('Error updating certificate:', error);
-            alert('Error updating certificate. Please try again.');
             this.isLoading = false;
           }
         });
@@ -328,13 +364,12 @@ export class CertificateFormComponent implements OnInit {
             if (uploadSuccess) {
               this.router.navigate(['/dashboard/certificates']);
             } else {
-              alert('Certificate created but some files failed to upload. You can upload them later from the certificate list.');
+              this.notificationService.warning('Certificate created but some files failed to upload. You can upload them later from the certificate list.');
               this.router.navigate(['/dashboard/certificates']);
             }
           },
           error: (error) => {
             console.error('Error creating certificate:', error);
-            alert('Error creating certificate. Please try again.');
             this.isLoading = false;
           }
         });

@@ -12,6 +12,8 @@ import { MatMenuModule } from '@angular/material/menu';
 
 import { LayoutComponent } from './layout.component';
 import { layoutRoutes } from './layout.routes';
+import { LoadingComponent } from '../shared/components/loading/loading.component';
+import { NotificationComponent } from '../shared/components/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { layoutRoutes } from './layout.routes';
     MatButtonModule,
     MatIconModule,
     MatListModule,
-    MatMenuModule
+    MatMenuModule,
+    LoadingComponent,
+    NotificationComponent
   ]
 })
 export class LayoutModule { }

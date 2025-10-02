@@ -29,6 +29,37 @@
             <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field class="filter-field" appearance="outline">
+          <mat-label>Batch</mat-label>
+          <mat-select [(value)]="batchFilter" (selectionChange)="onBatchFilter()">
+            <mat-option value="">All Batches</mat-option>
+            <mat-option *ngFor="let batch of batches" [value]="batch.id.toString()">
+              {{ batch.batch_number }} - {{ batch.company_name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="filter-field" appearance="outline">
+          <mat-label>From Date</mat-label>
+          <input matInput type="date" [(ngModel)]="dateFromFilter" (change)="onDateFromFilter()">
+        </mat-form-field>
+
+        <mat-form-field class="filter-field" appearance="outline">
+          <mat-label>To Date</mat-label>
+          <input matInput type="date" [(ngModel)]="dateToFilter" (change)="onDateToFilter()">
+        </mat-form-field>
+
+        <button mat-stroked-button (click)="clearFilters()" class="clear-button">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+
+      <div class="results-info">
+        <span class="results-count">
+          Showing {{ filteredCertificates.length }} of {{ certificates.length }} certificates
+        </span>
       </div>
 
       <div class="table-container">
@@ -97,6 +128,10 @@
                   class="attachment-icon signed-icon" title="Signed Certificate"
                   (click)="downloadAttachment(certificate, AttachmentType.SIGNED_CERTIFICATE)">
                   fact_check
+                </mat-icon>
+                <mat-icon *ngIf="hasAttachment(certificate, AttachmentType.USER_PHOTO)" title="User Photo"
+                  (click)="downloadAttachment(certificate, AttachmentType.USER_PHOTO)">
+                  person_outline
                 </mat-icon>
               </div>
             </td>

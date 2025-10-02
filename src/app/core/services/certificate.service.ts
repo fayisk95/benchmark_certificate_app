@@ -1,9 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, catchError, finalize } from 'rxjs/operators';
 import { Certificate, CreateCertificateRequest, UpdateCertificateRequest, CertificateStatus, ExportCertificateRequest } from '../../shared/models/certificate.model';
 import { ApiService } from './api.service';
 import { HttpClient } from '@angular/common/http';
+import { LoadingService } from '../../shared/services/loading.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 interface CertificatesResponse {
   certificates: Certificate[];
@@ -34,22 +36,41 @@ export class CertificateService {
   private _certificates = signal<Certificate[]>([]);
   certificates = this._certificates.asReadonly();
 
-  constructor(private apiService: ApiService, private http: HttpClient) { }
+  constructor(
+    private apiService: ApiService,
+    private http: HttpClient,
+    private loadingService: LoadingService,
+    private notificationService: NotificationService
+  ) { }
 
   loadCertificates(params?: any): Observable<CertificatesResponse> {
+    this.loadingService.show();
     return this.apiService.get<CertificatesResponse>('/certificates', params).pipe(
       tap(response => {
         this._certificates.set(response.certificates);
-      })
+      }),
+      catchError((error) => {
+        this.notificationService.error('Failed to load certificates');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   createCertificate(request: CreateCertificateRequest): Observable<Certificate> {
+    this.loadingService.show();
     return this.apiService.post<CertificateResponse>('/certificates', request).pipe(
       map(response => response.certificate),
       tap(certificate => {
         this._certificates.update(certs => [...certs, certificate]);
-      })
+        this.notificationService.success('Certificate created successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to create certificate';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
@@ -58,8 +79,14 @@ export class CertificateService {
   }
 
   getCertificateByIdFromApi(id: string): Observable<Certificate> {
+    this.loadingService.show();
     return this.apiService.get<CertificateResponse>(`/certificates/${id}`).pipe(
-      map(response => response.certificate)
+      map(response => response.certificate),
+      catchError((error) => {
+        this.notificationService.error('Failed to load certificate details');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
@@ -68,6 +95,7 @@ export class CertificateService {
   }
 
   updateCertificate(id: string, updates: UpdateCertificateRequest): Observable<Certificate> {
+    this.loadingService.show();
     return this.apiService.put<CertificateResponse>(`/certificates/${id}`, updates).pipe(
       map(response => response.certificate),
       tap(updatedCertificate => {
@@ -76,15 +104,30 @@ export class CertificateService {
             cert.id.toString() === id ? updatedCertificate : cert
           )
         );
-      })
+        this.notificationService.success('Certificate updated successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to update certificate';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
   deleteCertificate(id: string): Observable<any> {
+    this.loadingService.show();
     return this.apiService.delete(`/certificates/${id}`).pipe(
       tap(() => {
         this._certificates.update(certs => certs.filter(cert => cert.id.toString() !== id));
-      })
+        this.notificationService.success('Certificate deleted successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to delete certificate';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
     );
   }
 
@@ -93,11 +136,36 @@ export class CertificateService {
     formData.append('file', file);
     formData.append('file_type', fileType);
 
-    return this.apiService.uploadFile(`/certificates/${certificateId}/attachments`, formData);
+    this.loadingService.show();
+    return this.apiService.uploadFile(`/certificates/${certificateId}/attachments`, formData).pipe(
+      tap(() => {
+        this.notificationService.success('File uploaded successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to upload file';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
-
+  downloadFile(filePath: string) {
+    this.loadingService.show();
+    return this.apiService.getFile(`/certificates/download?file=${filePath}`);
+  }
   deleteAttachment(certificateId: string, attachmentId: string): Observable<any> {
-    return this.apiService.delete(`/certificates/${certificateId}/attachments/${attachmentId}`);
+    this.loadingService.show();
+    return this.apiService.delete(`/certificates/${certificateId}/attachments/${attachmentId}`).pipe(
+      tap(() => {
+        this.notificationService.success('Attachment deleted successfully');
+      }),
+      catchError((error) => {
+        const errorMessage = error.error?.message || 'Failed to delete attachment';
+        this.notificationService.error(errorMessage);
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   updateCertificateStatuses(): Observable<any> {
@@ -105,7 +173,14 @@ export class CertificateService {
   }
 
   getCertificateStats(): Observable<CertificateStatsResponse> {
-    return this.apiService.get<CertificateStatsResponse>('/certificates/stats/overview');
+    this.loadingService.show();
+    return this.apiService.get<CertificateStatsResponse>('/certificates/stats/overview').pipe(
+      catchError((error) => {
+        this.notificationService.error('Failed to load certificate statistics');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   getStatistics() {
@@ -119,10 +194,19 @@ export class CertificateService {
   }
 
   exportCertificates(certificates: ExportCertificateRequest): Observable<any> {
+    this.loadingService.show();
     return this.http.post('http://localhost:3000/api/export/generate-certificate', certificates, {
-      responseType: 'blob' as 'blob', // IMPORTANT: tells Angular it's binary
+      responseType: 'blob' as 'blob',
       observe: 'body'
-    });
-
+    }).pipe(
+      tap(() => {
+        this.notificationService.success('Certificates exported successfully');
+      }),
+      catchError((error) => {
+        this.notificationService.error('Failed to export certificates');
+        throw error;
+      }),
+      finalize(() => this.loadingService.hide())
+    );
   }
 }

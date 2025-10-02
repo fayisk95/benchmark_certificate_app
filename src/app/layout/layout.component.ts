@@ -4,6 +4,7 @@ import { AuthService } from '../shared/services/auth.service';
 import { PermissionsService } from '../shared/services/permissions.service';
 import { User, UserRole } from '../shared/models/user.model';
 import { filter } from 'rxjs/operators';
+import { NotificationService } from '../shared/services/notification.service';
 
 interface MenuItem {
   name: string;
@@ -36,7 +37,8 @@ export class LayoutComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private permissionsService: PermissionsService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +76,7 @@ export class LayoutComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.notificationService.success('Logged out successfully');
     this.router.navigate(['/login']);
   }
 }
